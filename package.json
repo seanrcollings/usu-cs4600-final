@@ -1,6 +1,7 @@
 {
 	"name": "final",
 	"version": "0.0.1",
+	"type": "module",
 	"private": true,
 	"scripts": {
 		"dev": "vite dev",
@@ -9,7 +10,8 @@
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"lint": "prettier --plugin-search-dir . --check .",
-		"format": "prettier --plugin-search-dir . --write ."
+		"format": "prettier --plugin-search-dir . --write .",
+		"worker": "nodemon worker.ts"
 	},
 	"devDependencies": {
 		"@sveltejs/adapter-auto": "^2.0.0",
@@ -28,7 +30,6 @@
 		"typescript": "^5.0.0",
 		"vite": "^4.2.0"
 	},
-	"type": "module",
 	"dependencies": {
 		"bullmq": "^3.10.4",
 		"dotenv": "^16.0.3",

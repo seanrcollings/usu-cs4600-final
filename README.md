@@ -1,38 +1,42 @@
-# create-svelte
+# Gift Giver
 
-Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/master/packages/create-svelte).
+Gift Giver is a  "wedding registry" like app where people can add gifts to list and then invite people to their list. Then people who are invited to the list can use the list to coordinate purchasing the gifts for the list's owner, but the owner themselves cannot see anything that they are doing, keeping it as a surprise.
 
-## Creating a project
 
-If you're seeing this, you've probably already done this step. Congrats!
+## Getting Started
 
-```bash
-# create a new project in the current directory
-npm create svelte@latest
+These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
 
-# create a new project in my-app
-npm create svelte@latest my-app
+### Prerequisites
+
+- `yarn`
+- `node`
+- `redis`
+
+### Installing
+
+A step by step series of examples that tell you how to get a development env running
+
+Install dependencies
+
+```
+$ yarn install
 ```
 
-## Developing
+And repeat
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
-
-```bash
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
+```
+until finished
 ```
 
-## Building
+### Running
 
-To create a production version of your app:
-
-```bash
-npm run build
+Run the development server with
+```
+$ yarn dev
 ```
 
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
+Run the background worker with
+```
+$ yarn worker
+```
