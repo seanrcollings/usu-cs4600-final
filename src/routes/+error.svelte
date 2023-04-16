@@ -1,8 +1,12 @@
-<main>
-	<h1 class="text-5xl">Whoops, something has gone wrong</h1>
+<script>
+	import '../app.css';
+</script>
+
+<main class="bg-white text-slate-600">
+	<h1 class="text-3xl mb-2 font-bold">Whoops, something has gone wrong</h1>
 
 	<p>
-		<a href="/">Go back to the homepage</a>
+		<a href="/" class="link link-primary link-hover">Go back to the homepage</a>
 	</p>
 
 	<p>Or play some Snake to take your mind off things</p>

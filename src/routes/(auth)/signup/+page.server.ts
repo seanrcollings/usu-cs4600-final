@@ -1,7 +1,6 @@
 import { createUser, getErrorMessage } from '$lib/auth';
 import { fail, redirect } from '@sveltejs/kit';
 import type { Actions } from './$types';
-import { FirebaseError } from 'firebase/app';
 
 export const actions = {
 	default: async ({ request, cookies }) => {

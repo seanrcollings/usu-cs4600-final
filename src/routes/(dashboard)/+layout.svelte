@@ -1,20 +1,19 @@
 <script lang="ts">
-	import LogoutHandler from '$lib/components/LogoutHandler.svelte';
-	import '../app.css';
+	import '../../app.css';
 	import type { PageData } from './$types';
+	import LogoutHandler from '$lib/components/LogoutHandler.svelte';
 
 	export let data: PageData;
 </script>
 
-<div>
+<nav class="p-4">
 	{#if data.loggedIn}
-		<h1>Logged in</h1>
 		<LogoutHandler />
 	{:else}
 		<h1>Not logged in</h1>
 	{/if}
-</div>
+</nav>
 
-<main class="w-2/5 m-auto">
+<main class="">
 	<slot />
 </main>
