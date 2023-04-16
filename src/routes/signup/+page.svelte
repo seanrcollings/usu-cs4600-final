@@ -1,10 +1,31 @@
 <script lang="ts">
-	// your script goes here
+	import { enhance } from '$app/forms';
+	import type { ActionData } from './$types';
+
+	export let form: ActionData;
 </script>
 
-<form action="/signup" method="POST" class="flex flex-col">
-	<input type="text" name="email" required class="border-solid border-red-400 border-2" />
-	<input type="password" name="password" required class="border-solid border-red-400 border-2" />
+{#if form?.message}
+	<p class="bg-red-400 p-2 text-white">{form.message}</p>
+{/if}
+<form action="/signup" method="POST" class="flex flex-col" use:enhance>
+	<label for="email">Email</label>
+	<input
+		type="text"
+		name="email"
+		id="email"
+		required
+		class="border-solid border-black border-2"
+		value={form?.data.email ?? ''}
+	/>
+	<label for="password">Password</label>
+	<input
+		type="password"
+		name="password"
+		id="password"
+		required
+		class="border-solid border-black border-2"
+	/>
 	<button>Submit</button>
 </form>
 

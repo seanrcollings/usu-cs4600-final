@@ -15,4 +15,6 @@
 	{/if}
 </div>
 
-<slot />
+<main class="w-2/5 m-auto">
+	<slot />
+</main>

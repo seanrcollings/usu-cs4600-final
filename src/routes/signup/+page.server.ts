@@ -1,6 +1,7 @@
-import { createUser } from '$lib/auth';
-import { fail } from '@sveltejs/kit';
+import { createUser, getErrorMessage } from '$lib/auth';
+import { fail, redirect } from '@sveltejs/kit';
 import type { Actions } from './$types';
+import { FirebaseError } from 'firebase/app';
 
 export const actions = {
 	default: async ({ request, cookies }) => {
@@ -12,9 +13,13 @@ export const actions = {
 			return fail(400, { data: { email }, message: 'Email and password is required' });
 		}
 
-		const user = await createUser(email, password);
-		cookies.set('token', await user.getIdToken());
+		try {
+			const user = await createUser(email, password);
+			cookies.set('token', await user.getIdToken());
+		} catch (exc) {
+			return fail(400, { data: { email }, message: getErrorMessage(exc as Error) });
+		}
 
-		return { success: true };
+		throw redirect(302, '/');
 	}
 } satisfies Actions;
