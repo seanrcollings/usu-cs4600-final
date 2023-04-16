@@ -33,6 +33,7 @@
 	"dependencies": {
 		"bullmq": "^3.10.4",
 		"dotenv": "^16.0.3",
+		"firebase": "^9.19.1",
 		"ioredis": "^5.3.1"
 	}
 }
