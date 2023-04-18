@@ -4,7 +4,7 @@ import IORedis from 'ioredis';
 
 config();
 
-const connection = new IORedis(process.env.REDIS_URL!);
+const connection = new IORedis(process.env.REDIS_URL!, { maxRetriesPerRequest: null });
 
 new Worker(
 	'Scrape',
