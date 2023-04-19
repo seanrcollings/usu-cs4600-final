@@ -1,19 +1,22 @@
 <script lang="ts">
-	import { compareAsc, formatDistanceToNow } from 'date-fns';
+	import { compareAsc, formatDistanceToNow, isPast } from 'date-fns';
 	import CreateList from '$lib/components/CreateList.svelte';
 	import DashboardTabs from '$lib/components/DashboardTabs.svelte';
 	import DeleteButton from '$lib/components/controls/DeleteButton.svelte';
-	import type { List } from '$lib/types/firestore';
-	import type { PageData } from './$types';
+	import type { ActionData, PageData } from './$types';
 	import ToggleButton from '$lib/components/controls/ToggleButton.svelte';
+	import { enhance } from '$app/forms';
+	import Alert from '$lib/components/Alert.svelte';
 
 	export let data: PageData;
+	export let form: ActionData;
+
 	let hidePastLists = true;
 
 	$: lists = data.lists
 		.filter((list) => {
 			if (hidePastLists) {
-				return compareAsc(new Date(list.eventDate), new Date()) !== -1;
+				return !isPast(new Date(list.eventDate));
 			}
 
 			return true;
@@ -27,25 +30,8 @@
 		})
 		.sort((a, b) => compareAsc(new Date(a.eventDate), new Date(b.eventDate)));
 
-	// Handlers
-
-	function handleListCreated(event: CustomEvent<{ newList: List }>) {
-		const newList = event.detail.newList;
-
-		lists = [
-			...lists,
-			{
-				...newList,
-				eventDate: new Date(newList.eventDate).toLocaleDateString(),
-				createdAt: new Date(newList.createdAt).toLocaleDateString()
-			}
-		];
-	}
-
-	function handleDeleteList(id: string) {}
-
 	function relativeBadge(date: Date): string {
-		if (compareAsc(date, new Date()) === -1) {
+		if (isPast(date)) {
 			return `<div class="badge badge-success">in the past</div>`;
 		}
 
@@ -55,6 +41,10 @@
 </script>
 
 <div class="container m-auto">
+	{#if form?.message}
+		<Alert type="error" class="mb-4">{form.message}</Alert>
+	{/if}
+
 	<div class="flex justify-between items-center mb-4">
 		<div class="flex items-center">
 			<DashboardTabs />
@@ -66,20 +56,19 @@
 			/>
 		</div>
 		<div class="flex items-center">
-			<CreateList on:list-created={handleListCreated} />
+			<CreateList />
 		</div>
 	</div>
 
 	<div class="overflow-x-auto">
 		<table class="table w-full">
-			<!-- head -->
 			<thead>
 				<tr>
 					<th />
 					<th>Name</th>
 					<th>Event Date</th>
 					<th>Created On</th>
-					<th>Actions</th>
+					<th class="text-right">Actions</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -94,8 +83,11 @@
 							</div>
 						</td>
 						<td>{list.createdAt}</td>
-						<td>
-							<DeleteButton on:click={() => handleDeleteList(list.id)} tooltip="Delete List" />
+						<td class="text-right">
+							<form action="/dashboard?/delete" method="POST" use:enhance>
+								<input type="text" value={list.id} name="id" hidden />
+								<DeleteButton tooltip="Delete List" />
+							</form>
 						</td>
 					</tr>
 				{/each}
@@ -103,7 +95,3 @@
 		</table>
 	</div>
 </div>
-
-<style>
-	/* your styles go here */
-</style>

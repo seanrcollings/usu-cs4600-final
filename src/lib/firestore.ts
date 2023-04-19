@@ -9,7 +9,8 @@ import {
 	CollectionReference,
 	FirestoreError,
 	Timestamp,
-	deleteDoc
+	deleteDoc,
+	doc
 } from 'firebase/firestore';
 import type { List } from '$lib/types/firestore';
 
@@ -61,9 +62,7 @@ export async function addUserList(uid: string, data: AddListData): Promise<List>
 }
 
 export async function deleteUserList(uid: string, id: string): Promise<void> {
-	const lists = userLists(uid);
-
-	console.log(uid, id);
+	await deleteDoc(doc(firestore, `users/${uid}/lists/${id}`));
 }
 
 export function getErrorMessage(error: Error): string {

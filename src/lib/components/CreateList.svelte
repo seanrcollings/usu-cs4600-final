@@ -4,21 +4,19 @@
 	import { createEventDispatcher } from 'svelte';
 	import TextInput from './controls/TextInput.svelte';
 	import DateInput from './controls/DateInput.svelte';
-	import type { ActionData, ActionsSuccess } from '../../routes/(dashboard)/dashboard/$types';
+	import type { ActionData } from '../../routes/(dashboard)/dashboard/$types';
 
 	let form: ActionData | undefined;
 	$: form = $page.form;
 
 	let modalCheckbox: HTMLInputElement;
 
-	const dispatch = createEventDispatcher();
 	let today = new Date().toISOString().split('T')[0];
 
 	const handleForm: SubmitFunction = ({ data }) => {
 		return ({ result, update }) => {
 			if (result.type === 'success') {
 				modalCheckbox.checked = false;
-				dispatch('list-created', { newList: result.data });
 			}
 
 			update();
@@ -37,7 +35,7 @@
 				<p class="alert alert-error mb-2 mt-2">{form.message}</p>
 			{/if}
 
-			<form use:enhance={handleForm} method="POST" action="/dashboard">
+			<form use:enhance={handleForm} method="POST" action="/dashboard?/create">
 				<div class="mt-2 mb-2">
 					<TextInput name="name" id="name" label="List Name" required />
 					<DateInput name="eventDate" id="eventDate" label="Event Date" value={today} required />
