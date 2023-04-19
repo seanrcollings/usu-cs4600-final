@@ -6,6 +6,7 @@
 	import type { List } from '$lib/types/firestore';
 	import type { PageData } from './$types';
 	import ToggleButton from '$lib/components/controls/ToggleButton.svelte';
+	import EditButton from '$lib/components/controls/EditButton.svelte';
 
 	export let data: PageData;
 	let hidePastLists = true;
@@ -95,7 +96,7 @@
 						</td>
 						<td>{list.createdAt}</td>
 						<td>
-							<DeleteButton on:click={() => handleDeleteList(list.id)} tooltip="Delete List" />
+							<EditButton href={`dashboard/${list.id}`} />
 						</td>
 					</tr>
 				{/each}

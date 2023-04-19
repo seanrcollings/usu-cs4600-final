@@ -1,19 +1,15 @@
-import { app } from './firebase';
 import {
-	getFirestore,
 	collection,
-	getDocs,
+	Timestamp,
+	type CollectionReference,
 	type DocumentData,
+	getDocs,
 	addDoc,
 	getDoc,
-	CollectionReference,
-	FirestoreError,
-	Timestamp,
-	deleteDoc
+	doc
 } from 'firebase/firestore';
+import { firestore } from './firestore';
 import type { List } from '$lib/types/firestore';
-
-const firestore = getFirestore(app);
 
 function userLists(uid: string): CollectionReference<DocumentData> {
 	return collection(firestore, `users/${uid}/lists`);
@@ -60,23 +56,20 @@ export async function addUserList(uid: string, data: AddListData): Promise<List>
 	return returnData;
 }
 
+export async function getUserList(uid: string, id: string): Promise<List> {
+	const docRef = doc(firestore, `users/${uid}/lists`, id);
+	const list = await getDoc(docRef);
+	const data = list.data() as InListData;
+
+	return {
+		...data,
+		createdAt: data.createdAt.toDate(),
+		eventDate: data.eventDate.toDate()
+	};
+}
+
 export async function deleteUserList(uid: string, id: string): Promise<void> {
 	const lists = userLists(uid);
 
 	console.log(uid, id);
-}
-
-export function getErrorMessage(error: Error): string {
-	if (error instanceof FirestoreError) {
-		switch (error.code) {
-			case 'not-found':
-				return 'No object exists at the desired location';
-			case 'already-exists':
-				return 'An object already exists at the desired location';
-			default:
-				return 'Something went wrong, please try again';
-		}
-	}
-
-	return 'Something went wrong, please try again';
 }
