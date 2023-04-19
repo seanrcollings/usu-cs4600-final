@@ -22,7 +22,7 @@
 					<p class="alert alert-error">{form.message}</p>
 				{/if}
 
-				<form action="/login" method="POST" class="flex flex-col gap-4">
+				<form action="/signup" method="POST" class="flex flex-col gap-4">
 					<TextInput
 						name="email"
 						id="email"

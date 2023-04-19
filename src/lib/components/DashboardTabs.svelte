@@ -5,16 +5,16 @@
 <div class="tabs">
 	<a
 		class="tab tab-bordered text-xl"
-		class:tab-active={$page.route.id === '/dashboard'}
+		class:tab-active={$page.route.id === '/(dashboard)/dashboard'}
 		href="/dashboard"
 	>
 		Your Lists
 	</a>
 	<a
 		class="tab tab-bordered text-xl"
-		class:tab-active={$page.route.id === '/dashboard/memberships'}
+		class:tab-active={$page.route.id === '/(dashboard)/memberships'}
 		href="/dashboard/memberships"
 	>
-		Your Mememberships
+		Your Memberships
 	</a>
 </div>

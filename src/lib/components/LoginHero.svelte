@@ -2,7 +2,7 @@
 	import { page } from '$app/stores';
 	import PasswordInput from '$lib/components/controls/PasswordInput.svelte';
 	import TextInput from '$lib/components/controls/TextInput.svelte';
-	import type { ActionData } from '../../routes/login/$types';
+	import type { ActionData } from '../../routes/(auth)/login/$types';
 
 	let form: ActionData | undefined;
 	$: form = $page.form;
