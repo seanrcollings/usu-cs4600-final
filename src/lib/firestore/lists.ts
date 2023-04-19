@@ -6,6 +6,7 @@ import {
 	getDocs,
 	addDoc,
 	getDoc,
+	deleteDoc,
 	doc
 } from 'firebase/firestore';
 import { firestore } from './firestore';
@@ -69,7 +70,5 @@ export async function getUserList(uid: string, id: string): Promise<List> {
 }
 
 export async function deleteUserList(uid: string, id: string): Promise<void> {
-	const lists = userLists(uid);
-
-	console.log(uid, id);
+	await deleteDoc(doc(firestore, `users/${uid}/lists/${id}`));
 }
