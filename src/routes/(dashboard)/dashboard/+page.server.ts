@@ -1,6 +1,7 @@
-import { fail, type Actions, redirect } from '@sveltejs/kit';
-import { addUserList, getErrorMessage, getUserLists } from '$lib/firestore';
+import { fail } from '@sveltejs/kit';
+import { addUserList, deleteUserList, getErrorMessage, getUserLists } from '$lib/firestore';
 import { getCurrentUser } from '$lib/auth';
+import type { Actions } from './$types.js';
 
 export const load = async ({ request, cookies }) => {
 	const user = getCurrentUser();
@@ -22,7 +23,7 @@ export const load = async ({ request, cookies }) => {
 };
 
 export const actions = {
-	default: async ({ request, cookies }) => {
+	create: async ({ request }) => {
 		const data = await request.formData();
 		const name = data.get('name') as string | null;
 		const eventDate = data.get('eventDate') as string | null;
@@ -43,6 +44,28 @@ export const actions = {
 			return { newList };
 		} catch (exc) {
 			return fail(400, { data: { name }, message: getErrorMessage(exc as Error) });
+		}
+	},
+	delete: async ({ request }) => {
+		const data = await request.formData();
+		const id = data.get('id') as string | null;
+
+		if (!id) {
+			return fail(400, { data: { id }, message: 'ID is required' });
+		}
+
+		const user = getCurrentUser();
+		if (!user) {
+			return fail(400, { data: { id }, message: 'User is not logged in' });
+		}
+
+		const uid = user.uid;
+
+		try {
+			await deleteUserList(uid, id);
+			return { id };
+		} catch (exc) {
+			return fail(400, { data: { id }, message: getErrorMessage(exc as Error) });
 		}
 	}
 } satisfies Actions;
