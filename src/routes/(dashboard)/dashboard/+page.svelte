@@ -14,30 +14,8 @@
 	let hidePastLists = true;
 
 	$: lists = data.lists
-		.filter((list) => {
-			if (hidePastLists) {
-				return !isPast(new Date(list.eventDate));
-			}
-
-			return true;
-		})
-		.map((list) => {
-			return {
-				...list,
-				eventDate: new Date(list.eventDate).toLocaleDateString(),
-				createdAt: new Date(list.createdAt).toLocaleDateString()
-			};
-		})
-		.sort((a, b) => compareAsc(new Date(a.eventDate), new Date(b.eventDate)));
-
-	function relativeBadge(date: Date): string {
-		if (isPast(date)) {
-			return `<div class="badge badge-success">in the past</div>`;
-		}
-
-		const distance = formatDistanceToNow(date, { addSuffix: true });
-		return `<div class="badge badge-info">${distance}</div>`;
-	}
+		.filter((list) => (hidePastLists ? !isPast(list.eventDate) : true))
+		.sort((a, b) => compareAsc(a.eventDate, b.eventDate));
 </script>
 
 <div class="container m-auto">
@@ -78,11 +56,18 @@
 						<td>{list.name}</td>
 						<td>
 							<div>
-								{list.eventDate}
-								{@html relativeBadge(new Date(list.eventDate))}
+								{list.eventDate.toLocaleDateString()}
+
+								{#if isPast(list.eventDate)}
+									<div class="badge badge-success">in the past</div>
+								{:else}
+									<div class="badge badge-info">
+										{formatDistanceToNow(list.eventDate, { addSuffix: true })}
+									</div>
+								{/if}
 							</div>
 						</td>
-						<td>{list.createdAt}</td>
+						<td>{list.createdAt.toLocaleDateString()}</td>
 						<td class="text-right">
 							<form action="/dashboard?/delete" method="POST" use:enhance>
 								<input type="text" value={list.id} name="id" hidden />
