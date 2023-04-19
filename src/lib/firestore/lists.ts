@@ -64,9 +64,16 @@ export async function getUserList(uid: string, id: string): Promise<List> {
 
 	return {
 		...data,
+		id: list.id,
 		createdAt: data.createdAt.toDate(),
 		eventDate: data.eventDate.toDate()
 	};
+}
+
+export async function doesUserListExist(uid: string, id: string): Promise<boolean> {
+	const docRef = doc(firestore, `users/${uid}/lists`, id);
+	const list = await getDoc(docRef);
+	return list.exists();
 }
 
 export async function deleteUserList(uid: string, id: string): Promise<void> {

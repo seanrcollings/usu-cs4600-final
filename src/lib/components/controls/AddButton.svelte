@@ -3,7 +3,7 @@
 </script>
 
 <div class="tooltip" data-tip={tooltip}>
-	<button class={`btn btn-circle ${$$props.class}`}>
+	<button class={`btn btn-circle ${$$props.class}`} on:click>
 		<svg
 			xmlns="http://www.w3.org/2000/svg"
 			fill="none"
