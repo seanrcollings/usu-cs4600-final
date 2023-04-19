@@ -9,12 +9,12 @@ interface OpenGraphData {
 	siteName: string;
 }
 
-interface ScrapeSchema extends OpenGraphData {
+export interface ScrapeSchema extends OpenGraphData {
 	price: string;
 	seller: string;
 }
 
-class Scaper {
+export class Scraper {
 	url: URL;
 	_root: HTMLElement | null = null;
 
@@ -39,7 +39,7 @@ class Scaper {
 
 	async root() {
 		if (!this._root) {
-			const res = await fetch(this.url, { headers: { 'User-Agent': 'Mozilla/5.0' } });
+			const res = await fetch(this.url.toString(), { headers: { 'User-Agent': 'Mozilla/5.0' } });
 			this._root = parse(await res.text());
 		}
 		return this._root;
@@ -87,10 +87,3 @@ class Scaper {
 		return { ...partial, price, seller, siteName: 'Ebay' };
 	}
 }
-
-// 'https://www.amazon.com/SAMSUNG-Inch-Internal-MZ-77E1T0B-AM/dp/B08QBJ2YMG/?_encoding=UTF8&pd_rd_w=J02AL&content-id=amzn1.sym.bc5f3394-3b4c-4031-8ac0-18107ac75816&pf_rd_p=bc5f3394-3b4c-4031-8ac0-18107ac75816&pf_rd_r=4Q8XPAF32BQ8CW8MEWV2&pd_rd_wg=uGWxo&pd_rd_r=b63ebaf6-18de-4ca7-a71b-77750c8cab36&ref_=pd_gw_ci_mcx_mr_hp_atf_m&th=1'
-const url =
-	'https://www.ebay.com/itm/256025750930?epid=4055491995&hash=item3b9c52ed92:g:XXEAAOSwz1xkI6zH&amdata=enc%3AAQAIAAABAGlbqj5h1VLywgQ3ZMZp2%2Beiknxz4mwn5P7vr47Slv43T3Qcl%2BxwFQcQmk0J%2B%2FWFltyJg0wjg%2BIwTLi2FShiKiwnNpxIx1k1nv55BjGa4U0rWrn7EEod9frDaBwR4%2Ft%2F1Ew0ilB%2BDtSwJWL5YjrhyIoW6OALra1DB9PAfZ1UgR2D25IkNcMqu0OiSafISCE3ipZ1263FZsoBK0yCWNaAgZhjH2IH%2BO9b%2BcQ%2BtvP6kVitSxnvJmHgXUDBstztTZ1ElLi7J4IuwJZxCDsHHX4CZI%2F%2FVfmpqE8O1C5H3fzOxF71Ya1edT3GoTCgpaeF54W%2FILLq03%2F1%2FEGhtNyRQ1Qr8As%3D%7Ctkp%3ABFBMxqL4rPNh';
-const scraper = new Scaper(url);
-
-scraper.scrape().then(console.log);
