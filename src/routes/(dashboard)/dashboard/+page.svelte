@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { compareAsc, formatDistanceToNow, isPast } from 'date-fns';
+	import { compareAsc, formatDistanceToNow, isPast, isToday } from 'date-fns';
 	import CreateList from '$lib/components/CreateList.svelte';
 	import DashboardTabs from '$lib/components/DashboardTabs.svelte';
 	import DeleteButton from '$lib/components/controls/DeleteButton.svelte';
@@ -57,9 +57,10 @@
 						<td>
 							<div>
 								{list.eventDate.toLocaleDateString()}
-
 								{#if isPast(list.eventDate)}
 									<div class="badge badge-success">in the past</div>
+								{:else if isToday(list.eventDate)}
+									<div class="badge badge-primary">today!</div>
 								{:else}
 									<div class="badge badge-info">
 										{formatDistanceToNow(list.eventDate, { addSuffix: true })}
