@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { compareAsc, formatDistanceToNow, isPast, isToday } from 'date-fns';
+	import { compareAsc, formatDistanceToNow, isPast, isToday, format } from 'date-fns';
 	import CreateList from '$lib/components/CreateList.svelte';
 	import DashboardTabs from '$lib/components/DashboardTabs.svelte';
 	import DeleteButton from '$lib/components/controls/DeleteButton.svelte';
@@ -13,8 +13,10 @@
 
 	let hidePastLists = true;
 
+	$: console.log(data.lists);
+
 	$: lists = data.lists
-		.filter((list) => (hidePastLists ? !isPast(list.eventDate) : true))
+		.filter((list) => (hidePastLists ? !isPast(list.eventDate) || isToday(list.eventDate) : true))
 		.sort((a, b) => compareAsc(a.eventDate, b.eventDate));
 </script>
 
@@ -56,11 +58,11 @@
 						<td>{list.name}</td>
 						<td>
 							<div>
-								{list.eventDate.toLocaleDateString()}
-								{#if isPast(list.eventDate)}
-									<div class="badge badge-success">in the past</div>
-								{:else if isToday(list.eventDate)}
+								{format(list.eventDate, 'P')}
+								{#if isToday(list.eventDate)}
 									<div class="badge badge-primary">today!</div>
+								{:else if isPast(list.eventDate)}
+									<div class="badge badge-success">in the past</div>
 								{:else}
 									<div class="badge badge-info">
 										{formatDistanceToNow(list.eventDate, { addSuffix: true })}
@@ -68,7 +70,7 @@
 								{/if}
 							</div>
 						</td>
-						<td>{list.createdAt.toLocaleDateString()}</td>
+						<td>{format(list.createdAt, 'P')}</td>
 						<td class="text-right">
 							<form action="/dashboard?/delete" method="POST" use:enhance>
 								<input type="text" value={list.id} name="id" hidden />

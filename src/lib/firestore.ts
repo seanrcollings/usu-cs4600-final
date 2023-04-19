@@ -1,9 +1,9 @@
 import { app } from './firebase';
 import {
+	type DocumentData,
 	getFirestore,
 	collection,
 	getDocs,
-	type DocumentData,
 	addDoc,
 	getDoc,
 	CollectionReference,
