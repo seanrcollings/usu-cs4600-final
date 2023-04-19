@@ -9,14 +9,21 @@ import { FirebaseError } from 'firebase/app';
 
 const auth = getAuth(app);
 
+// Populate the auth.currentUser object on page load
+auth.onAuthStateChanged((user) => {});
+
 export async function createUser(email: string, password: string): Promise<User> {
 	const { user } = await createUserWithEmailAndPassword(auth, email, password);
-
 	return user;
 }
 
 export async function signInUser(email: string, password: string): Promise<User> {
 	const { user } = await signInWithEmailAndPassword(auth, email, password);
+	return user;
+}
+
+export function getCurrentUser(): User | null {
+	const user = auth.currentUser;
 	return user;
 }
 
