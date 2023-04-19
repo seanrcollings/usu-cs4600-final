@@ -1,6 +1,7 @@
-import { fail, type Actions, redirect } from '@sveltejs/kit';
+import { fail } from '@sveltejs/kit';
 import { addUserList, deleteUserList, getErrorMessage, getUserLists } from '$lib/firestore';
 import { getCurrentUser } from '$lib/auth';
+import type { Actions } from './$types.js';
 
 export const load = async ({ request, cookies }) => {
 	const user = getCurrentUser();

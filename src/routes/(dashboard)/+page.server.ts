@@ -1,5 +1,8 @@
-import { error } from '@sveltejs/kit';
+import { redirect } from '@sveltejs/kit';
 
-// export function load() {
-// 	throw error(420, 'Bah');
-// }
+export async function load({ parent, locals }) {
+	const { loggedIn } = await parent();
+	if (loggedIn) {
+		throw redirect(302, '/dashboard');
+	}
+}

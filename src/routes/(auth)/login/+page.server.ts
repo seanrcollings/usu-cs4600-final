@@ -22,6 +22,6 @@ export const actions = {
 			return fail(400, { data: { email }, message: getErrorMessage(exc as Error) });
 		}
 
-		throw redirect(302, '/');
+		throw redirect(302, '/dashboard');
 	}
 } satisfies Actions;
