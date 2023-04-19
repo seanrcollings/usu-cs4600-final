@@ -4,7 +4,7 @@
 	import TextInput from '$lib/components/controls/TextInput.svelte';
 	import type { ActionData } from '../../routes/(auth)/login/$types';
 
-	let form: ActionData | undefined;
+	export let form: ActionData | undefined;
 	$: form = $page.form;
 </script>
 
