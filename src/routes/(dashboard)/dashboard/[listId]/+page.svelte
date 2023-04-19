@@ -6,8 +6,6 @@
 
 	export let data: PageData;
 	$: list = data.list!;
-
-	$: console.log(list);
 </script>
 
 <div class="container m-auto text-center flex flex-col items-center">

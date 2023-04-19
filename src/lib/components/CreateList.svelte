@@ -1,22 +1,26 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import { enhance, type SubmitFunction } from '$app/forms';
-	import { createEventDispatcher } from 'svelte';
 	import TextInput from './controls/TextInput.svelte';
 	import DateInput from './controls/DateInput.svelte';
 	import type { ActionData } from '../../routes/(dashboard)/dashboard/$types';
+	import { parse } from 'date-fns';
 
 	let form: ActionData | undefined;
 	$: form = $page.form;
 
-	let modalCheckbox: HTMLInputElement;
+	let open: boolean = false;
 
 	let today = new Date().toISOString().split('T')[0];
 
 	const handleForm: SubmitFunction = ({ data }) => {
+		const date = data.get('eventDate') as string;
+		const withTimezone = parse(date, 'yyyy-MM-dd', new Date());
+		data.set('eventDate', withTimezone.toISOString());
+
 		return ({ result, update }) => {
 			if (result.type === 'success') {
-				modalCheckbox.checked = false;
+				open = false;
 			}
 
 			update();
@@ -27,7 +31,7 @@
 <div>
 	<label for="create-list-modal" class="btn btn-primary">Add A List</label>
 
-	<input type="checkbox" id="create-list-modal" class="modal-toggle" bind:this={modalCheckbox} />
+	<input type="checkbox" id="create-list-modal" class="modal-toggle" bind:checked={open} />
 	<div class="modal">
 		<div class="modal-box relative">
 			<h3 class="text-lg font-bold">Add a New List</h3>
@@ -41,11 +45,7 @@
 					<DateInput name="eventDate" id="eventDate" label="Event Date" value={today} required />
 				</div>
 				<div class="modal-action">
-					<button
-						type="button"
-						class="btn btn-secondary"
-						on:click={() => (modalCheckbox.checked = false)}
-					>
+					<button type="button" class="btn btn-secondary" on:click={() => (open = false)}>
 						Cancel
 					</button>
 

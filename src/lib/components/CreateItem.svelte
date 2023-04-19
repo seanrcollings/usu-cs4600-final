@@ -11,12 +11,12 @@
 
 	let form: ActionData | undefined;
 	$: form = $page.form;
-	let modalCheckbox: HTMLInputElement;
+	let open: boolean = false;
 
 	const handleForm: SubmitFunction = ({ data }) => {
 		return ({ result, update }) => {
 			if (result.type === 'success') {
-				modalCheckbox.checked = false;
+				open = false;
 			}
 
 			update();
@@ -25,13 +25,9 @@
 </script>
 
 <div>
-	<AddButton
-		class="btn-primary"
-		tooltip="Add an item"
-		on:click={() => (modalCheckbox.checked = true)}
-	/>
+	<AddButton class="btn-primary" tooltip="Add an item" on:click={() => (open = true)} />
 
-	<input type="checkbox" id="create-list-modal" class="modal-toggle" bind:this={modalCheckbox} />
+	<input type="checkbox" id="create-list-modal" class="modal-toggle" bind:checked={open} />
 	<div class="modal">
 		<div class="modal-box relative">
 			<h3 class="text-lg font-bold">Add a New Item</h3>
@@ -46,11 +42,7 @@
 					<TextInput name="link" id="link" label="Link" required />
 				</div>
 				<div class="modal-action">
-					<button
-						type="button"
-						class="btn btn-secondary"
-						on:click={() => (modalCheckbox.checked = false)}
-					>
+					<button type="button" class="btn btn-secondary" on:click={() => (open = false)}>
 						Cancel
 					</button>
 

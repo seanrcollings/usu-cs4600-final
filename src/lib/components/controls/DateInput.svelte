@@ -27,5 +27,6 @@
 		{readonly}
 		autocomplete={autocomplete.toString()}
 		{...$$restProps}
+		on:change
 	/>
 </div>
