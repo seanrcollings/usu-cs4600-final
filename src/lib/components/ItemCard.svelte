@@ -3,6 +3,7 @@
 	import { fly } from 'svelte/transition';
 	import DeleteButton from './controls/DeleteButton.svelte';
 	import EditButton from './controls/EditButton.svelte';
+	import EditItem from './EditItem.svelte';
 
 	export let item: Item;
 	export let listId: string;
@@ -29,11 +30,8 @@
 
 	{#if hovering}
 		<div class="card-actions absolute right-2 top-2" transition:fly>
-			<form method="POST" action={`/dashboard/${listId}?/edit`}>
-				<button type="submit" class="btn btn-circle btn-sm btn-secondary">
-					<EditButton class="btn-sm btn-secondary" tooltip="Edit Item" isButton />
-				</button>
-			</form>
+			<EditItem {listId} {item} />
+
 			<form method="POST" action={`/dashboard/${listId}?/delete`}>
 				<button type="submit" class="btn btn-circle btn-sm btn-secondary">
 					<input type="text" value={item.id} name="id" hidden />
