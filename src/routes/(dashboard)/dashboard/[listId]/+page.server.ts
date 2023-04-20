@@ -1,6 +1,6 @@
 import { getCurrentUser } from '$lib/auth.js';
 import { getErrorMessage } from '$lib/firestore/firestore.js';
-import { addListItem, getListItems } from '$lib/firestore/items.js';
+import { addListItem, deleteListItem, getListItems } from '$lib/firestore/items.js';
 import { getUserList } from '$lib/firestore/lists.js';
 import type { ListWithItems } from '$lib/types/firestore.js';
 import { fail } from '@sveltejs/kit';
@@ -84,6 +84,47 @@ export const actions = {
 		} catch (exc) {
 			return fail(400, {
 				data: { title, description, link },
+				message: getErrorMessage(exc as Error)
+			});
+		}
+	},
+	delete: async ({ request, params }) => {
+		const { listId } = params;
+		const data = await request.formData();
+		const itemId = data.get('id') as string | null;
+
+		if (!itemId) {
+			return fail(400, {
+				data: { itemId },
+				message: 'Item ID is required'
+			});
+		}
+
+		const user = getCurrentUser();
+		if (!user) {
+			return fail(400, {
+				data: { itemId },
+				message: 'User is not logged in'
+			});
+		}
+
+		const uid = user.uid;
+
+		const listExists = await getUserList(uid, listId);
+
+		if (!listExists) {
+			return fail(400, {
+				data: { itemId },
+				message: 'List does not exist'
+			});
+		}
+
+		try {
+			await deleteListItem(uid, listId, itemId);
+			return { itemId };
+		} catch (exc) {
+			return fail(400, {
+				data: { itemId },
 				message: getErrorMessage(exc as Error)
 			});
 		}

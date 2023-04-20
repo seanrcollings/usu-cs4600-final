@@ -19,7 +19,7 @@
 	<div class="flex flex-wrap mt-4">
 		{#each list.items as item}
 			<div class="m-4">
-				<ItemCard {item} />
+				<ItemCard {item} listId={list.id} />
 			</div>
 		{/each}
 	</div>

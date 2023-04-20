@@ -1,5 +1,5 @@
 import type { Item } from '$lib/types/firestore';
-import { addDoc, collection, getDoc, getDocs } from 'firebase/firestore';
+import { addDoc, collection, deleteDoc, doc, getDoc, getDocs } from 'firebase/firestore';
 import { firestore } from './firestore';
 
 export async function getListItems(uid: string, listId: string): Promise<Item[]> {
@@ -24,4 +24,8 @@ export async function addListItem(uid: string, listId: string, data: AddItemData
 	const docData = doc.data();
 
 	return { id: doc.id, ...docData } as unknown as Item;
+}
+
+export async function deleteListItem(uid: string, listId: string, itemId: string): Promise<void> {
+	await deleteDoc(doc(firestore, `users/${uid}/lists/${listId}/items/${itemId}`));
 }
