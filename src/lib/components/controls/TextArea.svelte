@@ -15,7 +15,7 @@
 		{label}
 	</label>
 	<textarea
-		class="textarea textarea-bordered"
+		class="textarea textarea-bordered h-36"
 		bind:value
 		{id}
 		{name}

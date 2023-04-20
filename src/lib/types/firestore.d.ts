@@ -12,6 +12,7 @@ export interface Item {
 	image: string;
 	price?: string;
 	seller?: string;
+	createdAt: Date;
 }
 
 export interface ListWithItems extends List {

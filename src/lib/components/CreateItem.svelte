@@ -2,7 +2,6 @@
 	import { page } from '$app/stores';
 	import { enhance, type SubmitFunction } from '$app/forms';
 	import TextInput from './controls/TextInput.svelte';
-	import DateInput from './controls/DateInput.svelte';
 	import type { ActionData } from '../../routes/(dashboard)/dashboard/$types';
 	import AddButton from './controls/AddButton.svelte';
 	import TextArea from './controls/TextArea.svelte';
@@ -24,7 +23,7 @@
 	};
 </script>
 
-<div>
+<div class="flex items-center">
 	<AddButton class="btn-primary" tooltip="Add an item" on:click={() => (open = true)} />
 
 	<input type="checkbox" id="create-list-modal" class="modal-toggle" bind:checked={open} />
@@ -37,9 +36,15 @@
 
 			<form use:enhance={handleForm} method="POST" action={`/dashboard/${listId}?/create`}>
 				<div class="mt-2 mb-2">
-					<TextInput name="title" id="name" label="Name" />
+					<TextInput name="title" id="name" label="Name" required />
 					<TextArea name="description" id="description" label="Description" />
-					<TextInput name="link" id="link" label="Link" required />
+					<TextInput name="link" id="link" label="Link">
+						<label class="label" slot="after" for="link">
+							<span class="label-text-alt">
+								If you provide a link, we can pull additional details from the product page
+							</span>
+						</label>
+					</TextInput>
 				</div>
 				<div class="modal-action">
 					<button type="button" class="btn btn-secondary" on:click={() => (open = false)}>

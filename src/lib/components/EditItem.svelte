@@ -57,7 +57,13 @@
 						required
 						bind:value={item.description}
 					/>
-					<TextInput name="link" id="link" label="Link" required bind:value={item.seller} />
+					<TextInput name="link" id="link" label="Link" required bind:value={item.seller}>
+						<label class="label" slot="after" for="link">
+							<span class="label-text-alt">
+								If you provide a link, we can pull additional details from the product page
+							</span>
+						</label>
+					</TextInput>
 				</div>
 				<div class="modal-action">
 					<button type="button" class="btn btn-secondary" on:click={() => (open = false)}>

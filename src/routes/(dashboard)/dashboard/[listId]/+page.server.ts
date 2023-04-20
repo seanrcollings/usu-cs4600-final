@@ -43,20 +43,22 @@ export const actions = {
 		const description = data.get('description') as string | null;
 		const link = data.get('link') as string | null;
 
-		// if (!title || !description || !link) {
-		// 	return fail(400, {
-		// 		data: { title, description, link },
-		// 		message: 'All three fields are required'
-		// 	});
-		// }
-
-		try {
-			new URL(link);
-		} catch (exc) {
+		if (!title) {
 			return fail(400, {
 				data: { title, description, link },
-				message: 'Enter a valid URL'
+				message: 'A title is required'
 			});
+		}
+
+		if (link) {
+			try {
+				new URL(link);
+			} catch (exc) {
+				return fail(400, {
+					data: { title, description, link },
+					message: 'Enter a valid URL'
+				});
+			}
 		}
 
 		const { uid } = getCurrentUser();
@@ -74,10 +76,11 @@ export const actions = {
 			const newItem = await items.create([uid, listId], {
 				title,
 				description,
-				seller: link
+				seller: link,
+				createdAt: new Date()
 			});
 
-			scrapeItem(link, uid, listId, newItem.id);
+			if (link) scrapeItem(link, uid, listId, newItem.id);
 
 			return { newItem };
 		} catch (exc) {

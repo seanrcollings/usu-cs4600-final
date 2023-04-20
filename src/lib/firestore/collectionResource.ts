@@ -7,10 +7,11 @@ import {
 	doc,
 	updateDoc,
 	deleteDoc,
-	type DocumentData
+	type DocumentData,
+	Timestamp
 } from 'firebase/firestore';
 
-export class CollectionResource<Resource extends { id: string }> {
+export class CollectionResource<Resource> {
 	db: Firestore;
 
 	constructor(db: Firestore) {
@@ -30,7 +31,7 @@ export class CollectionResource<Resource extends { id: string }> {
 		const resourceCollection = collection(this.db, path);
 		const docRef = await addDoc(resourceCollection, data);
 		const doc = await getDoc(docRef);
-		const docData = doc.data();
+		const docData = this.sanitize(doc.data() as Resource);
 
 		return { id: doc.id, ...docData } as unknown as Resource;
 	}
@@ -39,15 +40,20 @@ export class CollectionResource<Resource extends { id: string }> {
 		const path = this.paths.list(pathSegments);
 		const resourceCollection = collection(this.db, path);
 		const snapshot = await getDocs(resourceCollection);
-		const resources = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+		const resources = snapshot.docs.map((doc) => {
+			const docData = this.sanitize(doc.data() as Resource);
+			return { id: doc.id, ...docData };
+		});
 		return resources as unknown as Resource[];
 	}
 
-	async show(...pathSegments: string[]): Promise<Resource> {
+	async show(...pathSegments: string[]): Promise<Resource | null> {
 		const path = this.paths.show(pathSegments);
 		const docRef = doc(this.db, path);
 		const snapshot = await getDoc(docRef);
-		const docData = snapshot.data();
+		if (!snapshot.exists()) return null;
+
+		const docData = this.sanitize(snapshot.data() as Resource);
 
 		return { id: snapshot.id, ...docData } as unknown as Resource;
 	}
@@ -63,5 +69,14 @@ export class CollectionResource<Resource extends { id: string }> {
 		const path = this.paths.delete(pathSegments);
 		const docRef = doc(this.db, path);
 		await deleteDoc(docRef);
+	}
+
+	protected sanitize(data: Resource): Resource {
+		return Object.fromEntries(
+			Object.entries(data!).map(([key, value]) => {
+				if (value instanceof Timestamp) return [key, value.toDate()];
+				return [key, value];
+			})
+		) as Resource;
 	}
 }

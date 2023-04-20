@@ -1,7 +1,5 @@
 import { parse, HTMLElement } from 'node-html-parser';
 
-const domains = ['www.amazon.com', 'www.ebay.com'];
-
 interface OpenGraphData {
 	title: string;
 	description: string;
@@ -20,8 +18,6 @@ export class Scraper {
 
 	constructor(url: string) {
 		this.url = new URL(url);
-
-		if (!domains.includes(this.url.hostname)) throw new Error('Unsupported site');
 	}
 
 	async scrape(): Promise<ScrapeSchema> {
@@ -31,7 +27,7 @@ export class Scraper {
 			case 'www.ebay.com':
 				return this.scrapeEbay();
 			default:
-				throw new Error('Unsupported site');
+				return this.unkownSiteScrape();
 		}
 	}
 
@@ -65,6 +61,12 @@ export class Scraper {
 		const siteName = await this.getOpenGraphContent('og:site_name');
 
 		return { title, description, image, siteName };
+	}
+
+	private async unkownSiteScrape(): Promise<ScrapeSchema> {
+		const partial = await this.scrapeOpenGraph();
+
+		return { ...partial, price: '', seller: '', siteName: this.url.hostname };
 	}
 
 	private async scrapeAmazon(): Promise<ScrapeSchema> {

@@ -37,9 +37,11 @@ new Worker<ScrapeData>(
 		const { url, uid, listId, itemId } = job.data;
 		const scraper = new Scraper(url);
 		const data = await scraper.scrape();
-		const item = await items.show(uid, listId, itemId);
 
 		console.log(`Scraped ${url} for /user/${uid}/list/${listId}/item/${itemId}`);
+
+		const item = await items.show(uid, listId, itemId);
+		if (!item) return;
 
 		const updated = {
 			title: item.title || data.title,
