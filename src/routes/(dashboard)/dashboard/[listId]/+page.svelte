@@ -1,30 +1,35 @@
 <script lang="ts">
+	import { compareAsc } from 'date-fns';
 	import CreateItem from '$lib/components/CreateItem.svelte';
 	import ItemCard from '$lib/components/ItemCard.svelte';
-	import AddButton from '$lib/components/controls/AddButton.svelte';
 	import type { PageData } from './$types';
+	import { flip } from 'svelte/animate';
 
 	export let data: PageData;
 	$: list = data.list!;
 </script>
 
-<div class="container m-auto text-center flex flex-col items-center">
-	<h1 class="text-xl">{list.name}</h1>
+<div class="container m-auto flex flex-col">
+	<div class="mx-4">
+		<h1 class="text-3xl sm:text-5xl font-bold self-start text-center sm:text-left">{list.name}</h1>
 
-	<div class="flex justify-between items-center mt-4 w-80">
-		<div class="badge">Created: {list.eventDate.toLocaleDateString()}</div>
-		<div class="badge">On: {list.createdAt.toLocaleDateString()}</div>
+		<div class="flex flex-wrap items-center mt-4 gap-4 justify-center sm:justify-start">
+			<div class="badge p-4 sm:text-lg">
+				<strong>Created</strong> : {list.eventDate.toLocaleDateString()}
+			</div>
+			<div class="badge p-4 sm:text-lg">
+				<strong>On</strong>: {list.createdAt.toLocaleDateString()}
+			</div>
+		</div>
 	</div>
 
-	<div class="flex flex-wrap mt-4">
-		{#each list.items as item}
-			<div class="m-4">
-				<ItemCard {item} />
+	<div class="flex flex-wrap sm:mt-4 flex-col sm:flex-row items-center">
+		{#each list.items.sort((a, b) => compareAsc(a.createdAt, b.createdAt)) as item (item.id)}
+			<div class="m-4" animate:flip={{ duration: 200 }}>
+				<ItemCard {item} listId={list.id} />
 			</div>
 		{/each}
-	</div>
 
-	<div class="mt-8">
 		<CreateItem listId={list.id} />
 	</div>
 </div>

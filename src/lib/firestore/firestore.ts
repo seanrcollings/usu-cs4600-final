@@ -1,5 +1,5 @@
-import { app } from '../firebase';
 import { getFirestore, FirestoreError } from 'firebase/firestore';
+import { app } from '../firebase.js';
 
 export const firestore = getFirestore(app);
 

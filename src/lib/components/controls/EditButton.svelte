@@ -1,20 +1,19 @@
 <script lang="ts">
+	import EditIcon from '../icons/EditIcon.svelte';
+
 	export let tooltip = '';
-	export let href: string;
+	export let href: string | undefined = undefined;
+	export let isButton = false;
 </script>
 
 <div class="tooltip" data-tip={tooltip}>
-	<a class={`btn btn-circle ${$$props.class}`} {href}>
-		<svg
-			xmlns="http://www.w3.org/2000/svg"
-			class="h-6 w-6"
-			fill="none"
-			viewBox="0 0 24 24"
-			stroke="currentColor"
-		>
-			<path
-				d="M8.071 21.586l-7.071 1.414 1.414-7.071 14.929-14.929 5.657 5.657-14.929 14.929zm-.493-.921l-4.243-4.243-1.06 5.303 5.303-1.06zm9.765-18.251l-13.3 13.301 4.242 4.242 13.301-13.3-4.243-4.243z"
-			/>
-		</svg>
-	</a>
+	{#if !isButton}
+		<a class={`btn btn-circle ${$$props.class}`} {href}>
+			<EditIcon />
+		</a>
+	{:else}
+		<button class={`btn btn-circle ${$$props.class}`} on:click>
+			<EditIcon />
+		</button>
+	{/if}
 </div>

@@ -15,6 +15,7 @@
 	<label class="label" for={id}>
 		{label}
 	</label>
+	<slot name="before" />
 	<input
 		class="input input-bordered"
 		bind:value
@@ -27,4 +28,5 @@
 		autocomplete={autocomplete.toString()}
 		{...$$restProps}
 	/>
+	<slot name="after" />
 </div>

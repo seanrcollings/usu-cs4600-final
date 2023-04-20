@@ -6,6 +6,7 @@ import {
 } from 'firebase/auth';
 import { app } from './firebase';
 import { FirebaseError } from 'firebase/app';
+import { redirect } from '@sveltejs/kit';
 
 const auth = getAuth(app);
 
@@ -22,9 +23,18 @@ export async function signInUser(email: string, password: string): Promise<User>
 	return user;
 }
 
-export function getCurrentUser(): User | null {
+export function getCurrentUser(): User {
 	const user = auth.currentUser;
+	if (!user) throw redirect(302, '/login');
 	return user;
+}
+
+export function signOutUser(): void {
+	auth.signOut();
+}
+
+export function isUserSignedIn(): boolean {
+	return !!auth.currentUser;
 }
 
 export const getErrorMessage = (error: Error): string => {
