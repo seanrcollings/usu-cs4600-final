@@ -8,7 +8,8 @@ import {
 	updateDoc,
 	deleteDoc,
 	type DocumentData,
-	Timestamp
+	Timestamp,
+	FirestoreError
 } from 'firebase/firestore';
 
 export class CollectionResource<Resource> {
@@ -56,6 +57,13 @@ export class CollectionResource<Resource> {
 		const docData = this.sanitize(snapshot.data() as Resource);
 
 		return { id: snapshot.id, ...docData } as unknown as Resource;
+	}
+
+	async exists(...pathSegments: string[]): Promise<boolean> {
+		const path = this.paths.show(pathSegments);
+		const docRef = doc(this.db, path);
+		const snapshot = await getDoc(docRef);
+		return snapshot.exists();
 	}
 
 	async update(pathSegments: string[], data: Partial<Resource>): Promise<void> {

@@ -4,20 +4,24 @@ import IORedis from 'ioredis';
 import { REDIS_URL } from '$env/static/private';
 import { getCurrentUser } from '$lib/auth.js';
 import { firestore, getErrorMessage } from '$lib/firestore/firestore.js';
-import { getUserList } from '$lib/firestore/lists.js';
 import type { ListWithItems } from '$lib/types/firestore.js';
 import { Items } from '$lib/firestore/items.js';
+import { Lists } from '$lib/firestore/lists.js';
+
+const listClient = new Lists(firestore);
+const itemsClient = new Items(firestore);
+const connection = new IORedis(REDIS_URL);
+const queue = new Queue('Scrape', { connection });
 
 export const load = async ({ params }) => {
 	const { listId } = params;
 	const { uid } = getCurrentUser();
 
-	const listExists = await getUserList(uid, listId);
-	if (!listExists) throw redirect(302, '/dashboard');
+	const list = await listClient.show(uid, listId);
+	if (!list) throw redirect(302, '/dashboard');
 
 	try {
-		const list = await getUserList(uid, listId);
-		const listItems = await items.list(uid, listId);
+		const listItems = await itemsClient.list(uid, listId);
 		const listWithItems: ListWithItems = { ...list, items: listItems };
 
 		return { list: listWithItems };
@@ -25,10 +29,6 @@ export const load = async ({ params }) => {
 		return { error: getErrorMessage(exc as Error) };
 	}
 };
-
-const items = new Items(firestore);
-const connection = new IORedis(REDIS_URL);
-const queue = new Queue('Scrape', { connection });
 
 function scrapeItem(url: string, uid: string, listId: string, itemId: string): void {
 	queue.add('scrape', { url, uid, listId, itemId });
@@ -63,9 +63,9 @@ export const actions = {
 
 		const { uid } = getCurrentUser();
 
-		const listExists = await getUserList(uid, listId);
+		const list = await listClient.show(uid, listId);
 
-		if (!listExists) {
+		if (!list) {
 			return fail(400, {
 				data: { title, description, link },
 				message: 'List does not exist'
@@ -73,7 +73,7 @@ export const actions = {
 		}
 
 		try {
-			const newItem = await items.create([uid, listId], {
+			const newItem = await itemsClient.create([uid, listId], {
 				title,
 				description,
 				seller: link,
@@ -104,9 +104,9 @@ export const actions = {
 
 		const { uid } = getCurrentUser();
 
-		const listExists = await getUserList(uid, listId);
+		const list = await listClient.show(uid, listId);
 
-		if (!listExists) {
+		if (!list) {
 			return fail(400, {
 				data: { itemId },
 				message: 'List does not exist'
@@ -114,7 +114,7 @@ export const actions = {
 		}
 
 		try {
-			await items.delete(uid, listId, itemId);
+			await itemsClient.delete(uid, listId, itemId);
 			return { itemId };
 		} catch (exc) {
 			return fail(400, {
@@ -149,7 +149,7 @@ export const actions = {
 		}
 
 		const { uid } = getCurrentUser();
-		const listExists = await getUserList(uid, listId);
+		const listExists = await listClient.show(uid, listId);
 
 		if (!listExists) {
 			return fail(400, {
@@ -159,7 +159,7 @@ export const actions = {
 		}
 
 		try {
-			const newItem = await items.update([uid, listId, itemId], {
+			const newItem = await itemsClient.update([uid, listId, itemId], {
 				title,
 				description,
 				seller: link,

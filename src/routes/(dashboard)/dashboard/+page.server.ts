@@ -1,22 +1,17 @@
 import { fail } from '@sveltejs/kit';
-import { addUserList, deleteUserList, getUserLists } from '$lib/firestore/lists';
-import { getErrorMessage } from '$lib/firestore/firestore';
+import { Lists } from '$lib/firestore/lists';
+import { firestore, getErrorMessage } from '$lib/firestore/firestore';
 import { getCurrentUser } from '$lib/auth';
 import type { Actions } from './$types.js';
 
-export const load = async ({ request, cookies }) => {
-	const user = getCurrentUser();
-	const uid = user?.uid;
+const listsClient = new Lists(firestore);
 
-	if (!uid) {
-		return { lists: [] };
-	}
+export const load = async () => {
+	const { uid } = getCurrentUser();
 
 	try {
-		const lists = await getUserLists(uid);
-		return {
-			lists
-		};
+		const lists = await listsClient.list(uid);
+		return { lists };
 	} catch (exc) {
 		console.log(getErrorMessage(exc as Error));
 		return { lists: [] };
@@ -34,14 +29,15 @@ export const actions = {
 		}
 
 		const user = getCurrentUser();
-		if (!user) {
-			return fail(400, { data: { name }, message: 'User is not logged in' });
-		}
-
 		const uid = user.uid;
 
 		try {
-			const newList = await addUserList(uid, { name, eventDate: new Date(eventDate) });
+			const newList = listsClient.create([uid], {
+				name,
+				eventDate: new Date(eventDate),
+				owner: { email: user.email!, uid }
+			});
+
 			return { newList };
 		} catch (exc) {
 			return fail(400, { data: { name }, message: getErrorMessage(exc as Error) });
@@ -63,7 +59,7 @@ export const actions = {
 		const uid = user.uid;
 
 		try {
-			await deleteUserList(uid, id);
+			await listsClient.delete(uid, id);
 			return { id };
 		} catch (exc) {
 			return fail(400, { data: { id }, message: getErrorMessage(exc as Error) });

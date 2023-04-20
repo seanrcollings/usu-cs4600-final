@@ -41,7 +41,7 @@
 					<tr>
 						<td>{i + 1}</td>
 						<td>
-							<a href="/dashboard/memberships/{list.userId}/{list.id}" class="link">
+							<a href="/dashboard/memberships/{list.owner.uid}/{list.id}" class="link">
 								{list.name}
 							</a>
 						</td>

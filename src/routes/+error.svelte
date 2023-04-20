@@ -1,9 +1,12 @@
-<script>
+<script lang="ts">
+	import { page } from '$app/stores';
 	import '../app.css';
+
+	const message: string = $page.error?.message || 'Whoops, something went wrong';
 </script>
 
 <main class="bg-white text-slate-600">
-	<h1 class="text-3xl mb-2 font-bold">Whoops, something has gone wrong</h1>
+	<h1 class="text-3xl mb-2 font-bold">{$page.status}: {message}</h1>
 
 	<p>
 		<a href="/" class="link link-primary link-hover">Go back to the homepage</a>

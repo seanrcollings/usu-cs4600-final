@@ -3,8 +3,8 @@ export interface List {
 	name: string;
 	createdAt: Date;
 	eventDate: Date;
-	userId: string;
 	members: string[];
+	owner: { email: string; uid: string };
 }
 
 export interface Item {
