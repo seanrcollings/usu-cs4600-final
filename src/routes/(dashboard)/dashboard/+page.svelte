@@ -35,7 +35,7 @@
 		</div>
 	</div>
 
-	<div class="flex flex-wrap">
+	<div class="flex flex-wrap flex-col sm:flex-row items-center">
 		{#each lists as list, i (list.id)}
 			<div class="m-4" animate:flip={{ duration: 200 }}>
 				<ListCard {list} />

@@ -2,6 +2,7 @@
 	import '../../app.css';
 	import LogoutHandler from '$lib/components/LogoutHandler.svelte';
 	import { theme } from '$lib/stores';
+	import Nav from '$lib/components/Nav.svelte';
 </script>
 
 <div data-theme={$theme} class="h-full">
@@ -13,7 +14,7 @@
 			<option value="dracula">Dracula Theme</option>
 			<option value="business">Business Theme</option>
 		</select>
-		<LogoutHandler />
+		<Nav />
 	</nav>
 
 	<main>

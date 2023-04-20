@@ -8,10 +8,10 @@
 	export let list: List;
 </script>
 
-<div class="card w-96 bg-base-content shadow-xl text-base-300" transition:scale>
+<div class="card w-72 sm:w-96 bg-base-content shadow-xl text-base-300" transition:scale>
 	<div class="card-body">
 		<h2 class="card-title">{list.name}</h2>
-		<div class="flex justify-between">
+		<div class="flex justify-between flex-wrap">
 			<p class="text-start"><strong>On:</strong> {format(list.eventDate, 'P')}</p>
 			{#if isToday(list.eventDate)}
 				<div class="badge badge-primary">today!</div>
