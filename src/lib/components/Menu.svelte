@@ -1,10 +1,12 @@
 <script>
 	import { slide } from 'svelte/transition';
+	import { navigating } from '$app/stores';
 	import LogoutHandler from './LogoutHandler.svelte';
 	import HamburgerIcon from './icons/HamburgerIcon.svelte';
 	import CloseIcon from './icons/CloseIcon.svelte';
 
 	export let open = false;
+	$: if ($navigating) open = false;
 </script>
 
 <div class="hidden sm:flex">
