@@ -4,7 +4,7 @@
 	import HamburgerIcon from './icons/HamburgerIcon.svelte';
 	import CloseIcon from './icons/CloseIcon.svelte';
 
-	let open = false;
+	export let open = false;
 </script>
 
 <div class="hidden sm:flex">
@@ -21,10 +21,14 @@
 </div>
 
 {#if open}
-	<div class="menu bg-base-300 w-screen absolute right-0 top-20 z-10" transition:slide>
+	<div
+		class="menu bg-base-300 w-screen absolute right-0 top-20 z-10"
+		transition:slide={{ duration: 200 }}
+	>
 		<div class="menu-content">
 			<a href="/dashboard" class="btn btn-ghost w-screen rounded-none">Dashboard</a>
 			<LogoutHandler class="w-screen rounded-none" />
+			<slot name="mobile-menu" />
 		</div>
 	</div>
 {/if}

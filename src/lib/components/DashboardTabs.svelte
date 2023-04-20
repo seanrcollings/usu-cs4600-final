@@ -2,7 +2,7 @@
 	import { page } from '$app/stores';
 </script>
 
-<div class="tabs">
+<div class="tabs justify-center">
 	<a
 		class="tab tab-bordered text-xl"
 		class:tab-active={$page.route.id === '/(dashboard)/dashboard'}

@@ -9,7 +9,7 @@
 	export let label: string = '';
 </script>
 
-<div class="flex items-center">
+<div class={`flex items-center ${$$props.class}`}>
 	<input
 		type="checkbox"
 		bind:checked
@@ -18,7 +18,7 @@
 		{disabled}
 		{readonly}
 		{...$$restProps}
-		class={`toggle mr-2 ${$$props.class || ''}`}
+		class={`toggle mr-2 ${$$props.class}`}
 	/>
 	<label class="label" for={id}>
 		{label}

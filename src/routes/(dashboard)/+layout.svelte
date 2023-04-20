@@ -1,8 +1,9 @@
 <script lang="ts">
 	import '../../app.css';
-	import LogoutHandler from '$lib/components/LogoutHandler.svelte';
-	import { theme } from '$lib/stores';
-	import Nav from '$lib/components/Nav.svelte';
+	import { theme, extraNavOptions } from '$lib/stores';
+	import Nav from '$lib/components/Menu.svelte';
+
+	let navBarOpen = false;
 </script>
 
 <div data-theme={$theme} class="h-full">
@@ -14,7 +15,21 @@
 			<option value="dracula">Dracula Theme</option>
 			<option value="business">Business Theme</option>
 		</select>
-		<Nav />
+		<Nav bind:open={navBarOpen}>
+			<div slot="mobile-menu">
+				{#each $extraNavOptions as row}
+					<button
+						class="btn btn-ghost w-screen"
+						on:click={() => {
+							row.onClick();
+							navBarOpen = false;
+						}}
+					>
+						{row.content}
+					</button>
+				{/each}
+			</div>
+		</Nav>
 	</nav>
 
 	<main>
