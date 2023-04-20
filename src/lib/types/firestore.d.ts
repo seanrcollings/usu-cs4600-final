@@ -3,6 +3,8 @@ export interface List {
 	name: string;
 	createdAt: Date;
 	eventDate: Date;
+	userId: string;
+	members: string[];
 }
 
 export interface Item {
