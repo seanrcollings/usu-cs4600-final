@@ -13,16 +13,18 @@
 		: undefined;
 
 	let hovering = false;
-
-	const toggleHover = () => {
-		hovering = !hovering;
-	};
+	let innerWidth: number = Infinity;
+	// 640px equivalent to tailwind's `sm:` breakpoint
+	$: mobile = innerWidth < 640;
+	$: hovering = mobile;
 </script>
+
+<svelte:window bind:innerWidth />
 
 <div
 	class="card w-72 h-96 bg-base-content shadow-xl text-neutral"
-	on:mouseenter={toggleHover}
-	on:mouseleave={toggleHover}
+	on:mouseenter={() => (hovering = mobile ? hovering : true)}
+	on:mouseleave={() => (hovering = mobile ? hovering : false)}
 	transition:scale={{ duration: 200 }}
 >
 	{#if item.image}

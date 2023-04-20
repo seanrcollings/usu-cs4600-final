@@ -27,7 +27,7 @@ export class Scraper {
 			case 'www.ebay.com':
 				return this.scrapeEbay();
 			default:
-				return this.unkownSiteScrape();
+				return this.unknownSiteScrape();
 		}
 	}
 
@@ -63,7 +63,7 @@ export class Scraper {
 		return { title, description, image, siteName };
 	}
 
-	private async unkownSiteScrape(): Promise<ScrapeSchema> {
+	private async unknownSiteScrape(): Promise<ScrapeSchema> {
 		const partial = await this.scrapeOpenGraph();
 
 		return { ...partial, price: '', seller: '', siteName: this.url.hostname };

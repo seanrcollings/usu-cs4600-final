@@ -5,7 +5,7 @@
 </script>
 
 <div data-theme={$theme} class="h-full">
-	<nav class="p-4 flex justify-end gap-5">
+	<nav class="p-4 flex justify-between sm:justify-end gap-5">
 		<select class="select select-ghost max-w-xs" bind:value={$theme}>
 			<option disabled selected>Pick a Theme</option>
 			<option value="dark">Dark Theme</option>
