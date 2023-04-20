@@ -3,7 +3,7 @@
 	import { compareAsc, isPast, isToday } from 'date-fns';
 	import CreateList from '$lib/components/CreateList.svelte';
 	import DashboardTabs from '$lib/components/DashboardTabs.svelte';
-	import type { Action, ActionData, PageData } from './$types';
+	import type { ActionData, PageData } from './$types';
 	import ToggleButton from '$lib/components/controls/ToggleButton.svelte';
 	import Alert from '$lib/components/Alert.svelte';
 	import ListCard from '$lib/components/ListCard.svelte';
@@ -14,7 +14,6 @@
 	export let form: ActionData;
 
 	let hidePastLists = true;
-	let hidePastListsDisabled = false;
 
 	$: lists = data.lists
 		.filter((list) => (hidePastLists ? !isPast(list.eventDate) || isToday(list.eventDate) : true))

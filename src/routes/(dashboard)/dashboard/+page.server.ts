@@ -1,21 +1,18 @@
-import { fail } from '@sveltejs/kit';
-import { Lists } from '$lib/firestore/lists';
-import { firestore, getErrorMessage } from '$lib/firestore/firestore';
-import { getCurrentUser } from '$lib/auth';
+import { error, fail, redirect } from '@sveltejs/kit';
 import type { Actions } from './$types.js';
+import { firestore, getErrorMessage } from '$lib/firestore/firestore';
+import { Lists } from '$lib/firestore/lists';
+import { Invites } from '$lib/firestore/invites.js';
+import { getCurrentUser } from '$lib/auth';
 
 const listsClient = new Lists(firestore);
+const invitesClient = new Invites(firestore);
 
 export const load = async () => {
 	const { uid } = getCurrentUser();
 
-	try {
-		const lists = await listsClient.list(uid);
-		return { lists };
-	} catch (exc) {
-		console.log(getErrorMessage(exc as Error));
-		return { lists: [] };
-	}
+	const lists = await listsClient.list(uid);
+	return { lists };
 };
 
 export const actions = {
@@ -43,6 +40,7 @@ export const actions = {
 			return fail(400, { data: { name }, message: getErrorMessage(exc as Error) });
 		}
 	},
+
 	delete: async ({ request }) => {
 		const data = await request.formData();
 		const id = data.get('id') as string | null;

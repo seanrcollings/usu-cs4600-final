@@ -7,17 +7,21 @@ import { firestore, getErrorMessage } from '$lib/firestore/firestore.js';
 import type { ListWithItems } from '$lib/types/firestore.js';
 import { Items } from '$lib/firestore/items.js';
 import { Lists } from '$lib/firestore/lists.js';
+import { Invites } from '$lib/firestore/invites.js';
 
-const listClient = new Lists(firestore);
+const listsClient = new Lists(firestore);
 const itemsClient = new Items(firestore);
+const invitesClient = new Invites(firestore);
+
 const connection = new IORedis(REDIS_URL);
-const queue = new Queue('Scrape', { connection });
+const scrapeQueue = new Queue('Scrape', { connection });
+const inviteQueue = new Queue('Invite', { connection });
 
 export const load = async ({ params }) => {
 	const { listId } = params;
 	const { uid } = getCurrentUser();
 
-	const list = await listClient.show(uid, listId);
+	const list = await listsClient.show(uid, listId);
 	if (!list) throw redirect(302, '/dashboard');
 
 	try {
@@ -29,10 +33,6 @@ export const load = async ({ params }) => {
 		return { error: getErrorMessage(exc as Error) };
 	}
 };
-
-function scrapeItem(url: string, uid: string, listId: string, itemId: string): void {
-	queue.add('scrape', { url, uid, listId, itemId });
-}
 
 export const actions = {
 	create: async ({ request, params }) => {
@@ -63,7 +63,7 @@ export const actions = {
 
 		const { uid } = getCurrentUser();
 
-		const list = await listClient.show(uid, listId);
+		const list = await listsClient.show(uid, listId);
 
 		if (!list) {
 			return fail(400, {
@@ -80,7 +80,9 @@ export const actions = {
 				createdAt: new Date()
 			});
 
-			if (link) scrapeItem(link, uid, listId, newItem.id);
+			if (link) {
+				await scrapeQueue.add('scrape', { url: link, uid, listId, itemId: newItem.id });
+			}
 
 			return { newItem };
 		} catch (exc) {
@@ -104,7 +106,7 @@ export const actions = {
 
 		const { uid } = getCurrentUser();
 
-		const list = await listClient.show(uid, listId);
+		const list = await listsClient.show(uid, listId);
 
 		if (!list) {
 			return fail(400, {
@@ -149,7 +151,7 @@ export const actions = {
 		}
 
 		const { uid } = getCurrentUser();
-		const listExists = await listClient.show(uid, listId);
+		const listExists = await listsClient.show(uid, listId);
 
 		if (!listExists) {
 			return fail(400, {
@@ -172,6 +174,47 @@ export const actions = {
 				data: { title, description, link },
 				message: getErrorMessage(exc as Error)
 			});
+		}
+	},
+
+	invite: async ({ params, request }) => {
+		const data = await request.formData();
+		const { listId } = params;
+		const contacts = data.get('contacts') as string | null;
+
+		if (!contacts) {
+			return fail(400, { data: { contacts }, message: 'Must provide at least one contact' });
+		}
+
+		const currUser = getCurrentUser();
+
+		if (!listsClient.show(currUser.uid, listId)) {
+			return fail(404, { data: { listId }, message: 'List not found' });
+		}
+
+		const contactList = contacts.split(',');
+
+		try {
+			await Promise.all(
+				contactList.map(async (contact) => {
+					const invite = await invitesClient.create({
+						listId: listId,
+						singleUse: true,
+						contact: contact,
+						invitedBy: { email: currUser.email, uid: currUser.uid }
+					});
+					inviteQueue.add('invite', {
+						contact,
+						inviteId: invite.id,
+						listId,
+						invitedBy: currUser.email
+					});
+					return invite;
+				})
+			);
+			return { success: true };
+		} catch (exc) {
+			return fail(400, { data: { contacts }, message: getErrorMessage(exc as Error) });
 		}
 	}
 };

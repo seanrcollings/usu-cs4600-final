@@ -7,9 +7,7 @@ import {
 	doc,
 	updateDoc,
 	deleteDoc,
-	type DocumentData,
-	Timestamp,
-	FirestoreError
+	Timestamp
 } from 'firebase/firestore';
 
 export class CollectionResource<Resource> {

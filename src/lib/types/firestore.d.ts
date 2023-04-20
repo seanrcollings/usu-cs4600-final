@@ -20,3 +20,11 @@ export interface Item {
 export interface ListWithItems extends List {
 	items: Item[];
 }
+
+export interface ListInvitation {
+	id: string;
+	listId: string;
+	invitedBy: { email: string; uid: string };
+	singleUse: boolean;
+	contact: string;
+}

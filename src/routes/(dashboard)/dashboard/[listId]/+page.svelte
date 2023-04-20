@@ -4,6 +4,7 @@
 	import ItemCard from '$lib/components/ItemCard.svelte';
 	import type { PageData } from './$types';
 	import { flip } from 'svelte/animate';
+	import InviteModal from '$lib/components/InviteModal.svelte';
 
 	export let data: PageData;
 	$: list = data.list!;
@@ -21,6 +22,7 @@
 				<strong>On</strong>: {list.createdAt.toLocaleDateString()}
 			</div>
 		</div>
+		<InviteModal listId={list.id} />
 	</div>
 
 	<div class="flex flex-wrap sm:mt-4 flex-col sm:flex-row items-center">
