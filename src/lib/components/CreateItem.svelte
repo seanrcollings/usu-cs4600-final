@@ -37,8 +37,8 @@
 
 			<form use:enhance={handleForm} method="POST" action={`/dashboard/${listId}?/create`}>
 				<div class="mt-2 mb-2">
-					<TextInput name="title" id="name" label="Name" required />
-					<TextArea name="description" id="description" label="Description" required />
+					<TextInput name="title" id="name" label="Name" />
+					<TextArea name="description" id="description" label="Description" />
 					<TextInput name="link" id="link" label="Link" required />
 				</div>
 				<div class="modal-action">

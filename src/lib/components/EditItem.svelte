@@ -41,7 +41,12 @@
 				<p class="alert alert-error mb-2 mt-2">{form.message}</p>
 			{/if}
 
-			<form use:enhance={handleForm} method="POST" action={`/dashboard/${listId}?/update`}>
+			<form
+				use:enhance={handleForm}
+				method="POST"
+				action={`/dashboard/${listId}?/update`}
+				use:enhance
+			>
 				<div class="mt-2 mb-2">
 					<input type="text" value={item.id} name="id" hidden />
 					<TextInput name="title" id="name" label="Name" required bind:value={item.title} />

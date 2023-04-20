@@ -2,8 +2,8 @@
 	import type { Item } from '$lib/types/firestore';
 	import { fly } from 'svelte/transition';
 	import DeleteButton from './controls/DeleteButton.svelte';
-	import EditButton from './controls/EditButton.svelte';
 	import EditItem from './EditItem.svelte';
+	import { enhance } from '$app/forms';
 
 	export let item: Item;
 	export let listId: string;
@@ -32,7 +32,7 @@
 		<div class="card-actions absolute right-2 top-2" transition:fly>
 			<EditItem {listId} {item} />
 
-			<form method="POST" action={`/dashboard/${listId}?/delete`}>
+			<form method="POST" action={`/dashboard/${listId}?/delete`} use:enhance>
 				<button type="submit" class="btn btn-circle btn-sm btn-secondary">
 					<input type="text" value={item.id} name="id" hidden />
 					<DeleteButton class="btn-sm btn-secondary" tooltip="Delete Item" />

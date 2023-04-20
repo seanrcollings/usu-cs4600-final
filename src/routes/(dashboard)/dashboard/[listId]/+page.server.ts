@@ -1,31 +1,38 @@
+import { fail, redirect } from '@sveltejs/kit';
+import { Queue } from 'bullmq';
+import IORedis from 'ioredis';
+import { REDIS_URL } from '$env/static/private';
 import { getCurrentUser } from '$lib/auth.js';
-import { getErrorMessage } from '$lib/firestore/firestore.js';
-import { addListItem, deleteListItem, getListItems, updateListItem } from '$lib/firestore/items.js';
+import { firestore, getErrorMessage } from '$lib/firestore/firestore.js';
 import { getUserList } from '$lib/firestore/lists.js';
 import type { ListWithItems } from '$lib/types/firestore.js';
-import { fail } from '@sveltejs/kit';
+import { Items } from '$lib/firestore/items.js';
 
 export const load = async ({ params }) => {
 	const { listId } = params;
-
-	const user = getCurrentUser();
-	const uid = user?.uid;
-
-	if (!uid) return { error: 'User is not logged in' };
+	const { uid } = getCurrentUser();
 
 	const listExists = await getUserList(uid, listId);
-	if (!listExists) return { error: 'List not found' };
+	if (!listExists) throw redirect(302, '/dashboard');
 
 	try {
 		const list = await getUserList(uid, listId);
-		const items = await getListItems(uid, listId);
+		const listItems = await items.list(uid, listId);
+		const listWithItems: ListWithItems = { ...list, items: listItems };
 
-		const listWithItems: ListWithItems = { ...list, items };
 		return { list: listWithItems };
 	} catch (exc) {
 		return { error: getErrorMessage(exc as Error) };
 	}
 };
+
+const items = new Items(firestore);
+const connection = new IORedis(REDIS_URL);
+const queue = new Queue('Scrape', { connection });
+
+function scrapeItem(url: string, uid: string, listId: string, itemId: string): void {
+	queue.add('scrape', { url, uid, listId, itemId });
+}
 
 export const actions = {
 	create: async ({ request, params }) => {
@@ -36,12 +43,12 @@ export const actions = {
 		const description = data.get('description') as string | null;
 		const link = data.get('link') as string | null;
 
-		if (!title || !description || !link) {
-			return fail(400, {
-				data: { title, description, link },
-				message: 'All three fields are required'
-			});
-		}
+		// if (!title || !description || !link) {
+		// 	return fail(400, {
+		// 		data: { title, description, link },
+		// 		message: 'All three fields are required'
+		// 	});
+		// }
 
 		try {
 			new URL(link);
@@ -52,16 +59,7 @@ export const actions = {
 			});
 		}
 
-		const user = getCurrentUser();
-
-		if (!user) {
-			return fail(400, {
-				data: { title, description, link },
-				message: 'User is not logged in'
-			});
-		}
-
-		const uid = user.uid;
+		const { uid } = getCurrentUser();
 
 		const listExists = await getUserList(uid, listId);
 
@@ -73,12 +71,13 @@ export const actions = {
 		}
 
 		try {
-			const newItem = await addListItem(uid, listId, {
+			const newItem = await items.create([uid, listId], {
 				title,
 				description,
-				seller: link,
-				image: 'https://placehold.co/300x150'
+				seller: link
 			});
+
+			scrapeItem(link, uid, listId, newItem.id);
 
 			return { newItem };
 		} catch (exc) {
@@ -100,15 +99,7 @@ export const actions = {
 			});
 		}
 
-		const user = getCurrentUser();
-		if (!user) {
-			return fail(400, {
-				data: { itemId },
-				message: 'User is not logged in'
-			});
-		}
-
-		const uid = user.uid;
+		const { uid } = getCurrentUser();
 
 		const listExists = await getUserList(uid, listId);
 
@@ -120,7 +111,7 @@ export const actions = {
 		}
 
 		try {
-			await deleteListItem(uid, listId, itemId);
+			await items.delete(uid, listId, itemId);
 			return { itemId };
 		} catch (exc) {
 			return fail(400, {
@@ -154,17 +145,7 @@ export const actions = {
 			});
 		}
 
-		const user = getCurrentUser();
-
-		if (!user) {
-			return fail(400, {
-				data: { title, description, link },
-				message: 'User is not logged in'
-			});
-		}
-
-		const uid = user.uid;
-
+		const { uid } = getCurrentUser();
 		const listExists = await getUserList(uid, listId);
 
 		if (!listExists) {
@@ -175,8 +156,7 @@ export const actions = {
 		}
 
 		try {
-			const newItem = await updateListItem(uid, listId, {
-				id: itemId,
+			const newItem = await items.update([uid, listId, itemId], {
 				title,
 				description,
 				seller: link,

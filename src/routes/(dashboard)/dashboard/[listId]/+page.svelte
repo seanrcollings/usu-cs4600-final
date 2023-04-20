@@ -1,7 +1,6 @@
 <script lang="ts">
 	import CreateItem from '$lib/components/CreateItem.svelte';
 	import ItemCard from '$lib/components/ItemCard.svelte';
-	import AddButton from '$lib/components/controls/AddButton.svelte';
 	import type { PageData } from './$types';
 
 	export let data: PageData;
