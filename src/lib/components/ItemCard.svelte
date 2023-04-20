@@ -22,7 +22,7 @@
 <svelte:window bind:innerWidth />
 
 <div
-	class="card w-72 h-96 bg-base-content shadow-xl text-neutral"
+	class="card w-72 h-96 bg-base-content shadow-xl text-base-300"
 	on:mouseenter={() => (hovering = mobile ? hovering : true)}
 	on:mouseleave={() => (hovering = mobile ? hovering : false)}
 	transition:scale={{ duration: 200 }}

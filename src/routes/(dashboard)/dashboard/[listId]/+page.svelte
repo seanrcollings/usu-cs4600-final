@@ -3,6 +3,7 @@
 	import CreateItem from '$lib/components/CreateItem.svelte';
 	import ItemCard from '$lib/components/ItemCard.svelte';
 	import type { PageData } from './$types';
+	import { flip } from 'svelte/animate';
 
 	export let data: PageData;
 	$: list = data.list!;
@@ -23,8 +24,8 @@
 	</div>
 
 	<div class="flex flex-wrap sm:mt-4 flex-col sm:flex-row items-center">
-		{#each list.items.sort((a, b) => compareAsc(a.createdAt, b.createdAt)) as item}
-			<div class="m-4">
+		{#each list.items.sort((a, b) => compareAsc(a.createdAt, b.createdAt)) as item (item.id)}
+			<div class="m-4" animate:flip={{ duration: 200 }}>
 				<ItemCard {item} listId={list.id} />
 			</div>
 		{/each}

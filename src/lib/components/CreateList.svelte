@@ -5,6 +5,7 @@
 	import DateInput from './controls/DateInput.svelte';
 	import type { ActionData } from '../../routes/(dashboard)/dashboard/$types';
 	import { parse } from 'date-fns';
+	import AddButton from './controls/AddButton.svelte';
 
 	let form: ActionData | undefined;
 	$: form = $page.form;
@@ -29,7 +30,7 @@
 </script>
 
 <div>
-	<label for="create-list-modal" class="btn btn-primary">Add A List</label>
+	<AddButton class="btn-primary" tooltip="Add a List" on:click={() => (open = true)} />
 
 	<input type="checkbox" id="create-list-modal" class="modal-toggle" bind:checked={open} />
 	<div class="modal">
