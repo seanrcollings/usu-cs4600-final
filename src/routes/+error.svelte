@@ -5,6 +5,10 @@
 	const message: string = $page.error?.message || 'Whoops, something went wrong';
 </script>
 
+<svelte:head>
+	<title>{$page.status} | Gift Giver</title>
+</svelte:head>
+
 <main class="bg-white text-slate-600">
 	<h1 class="text-3xl mb-2 font-bold">{$page.status}: {message}</h1>
 

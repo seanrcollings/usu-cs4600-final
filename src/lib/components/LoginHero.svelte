@@ -6,6 +6,8 @@
 
 	export let form: ActionData | undefined = undefined;
 	$: form = $page.form;
+
+	const redirect = $page.url.searchParams.get('redirectTo');
 </script>
 
 <div class="hero min-h-screen bg-base-200">
@@ -35,7 +37,12 @@
 					<button class="btn btn-primary">Login</button>
 					<div class="ml-auto">
 						Don't have an Account?
-						<a href="/signup" class="link link-accent link-hover">Sign Up</a>
+						{#if redirect}
+							<a href="/signup?redirectTo={redirect}" class="link link-accent link-hover">Sign Up</a
+							>
+						{:else}
+							<a href="/signup" class="link link-accent link-hover">Sign Up</a>
+						{/if}
 					</div>
 				</form>
 			</div>

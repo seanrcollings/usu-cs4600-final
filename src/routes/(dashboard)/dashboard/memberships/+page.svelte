@@ -13,6 +13,9 @@
 		.sort((a, b) => compareAsc(a.eventDate, b.eventDate));
 </script>
 
+<svelte:head>
+	<title>Memberships | Gift Giver</title>
+</svelte:head>
 <div class="container m-auto">
 	<div class="flex justify-between items-center mb-4">
 		<div class="flex items-center">

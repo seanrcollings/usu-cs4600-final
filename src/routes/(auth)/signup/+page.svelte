@@ -1,11 +1,17 @@
 <script lang="ts">
-	import { enhance } from '$app/forms';
+	import { page } from '$app/stores';
 	import PasswordInput from '$lib/components/controls/PasswordInput.svelte';
 	import TextInput from '$lib/components/controls/TextInput.svelte';
 	import type { ActionData } from './$types';
 
 	export let form: ActionData;
+
+	const redirect = $page.url.searchParams.get('redirectTo');
 </script>
+
+<svelte:head>
+	<title>Sign Up | Gift Giver</title>
+</svelte:head>
 
 <div class="hero min-h-screen bg-base-200">
 	<div class="hero-content flex-col lg:flex-row-reverse md:w-1/3 w-3/4">
@@ -34,7 +40,11 @@
 					<button class="btn btn-primary">Create Account</button>
 					<div class="ml-auto">
 						Already have an Account?
-						<a href="/login" class="link link-accent link-hover">Login</a>
+						{#if redirect}
+							<a href="/login?redirectTo={redirect}" class="link link-accent link-hover">Login</a>
+						{:else}
+							<a href="/login" class="link link-accent link-hover">Login</a>
+						{/if}
 					</div>
 				</form>
 			</div>

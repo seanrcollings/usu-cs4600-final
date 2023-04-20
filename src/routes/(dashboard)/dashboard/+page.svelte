@@ -41,6 +41,10 @@
 	});
 </script>
 
+<svelte:head>
+	<title>Dashboard | Gift Giver</title>
+</svelte:head>
+
 <div class="container m-auto">
 	{#if form?.message}
 		<Alert type="error" class="mb-4">{form.message}</Alert>

@@ -7,7 +7,6 @@ export async function load() {
 	if (!user) throw redirect(302, '/login');
 
 	const lists = await getUserMembershipLists(user?.uid);
-	console.log(lists);
 
 	return { lists };
 }

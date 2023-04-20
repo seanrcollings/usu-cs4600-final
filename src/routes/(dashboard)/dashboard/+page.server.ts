@@ -29,13 +29,14 @@ export const actions = {
 		const uid = user.uid;
 
 		try {
-			const newList = listsClient.create([uid], {
+			const newList = await listsClient.create([uid], {
 				name,
 				eventDate: new Date(eventDate),
+				createdAt: new Date(),
 				owner: { email: user.email!, uid }
 			});
 
-			return { newList };
+			return { list: newList };
 		} catch (exc) {
 			return fail(400, { data: { name }, message: getErrorMessage(exc as Error) });
 		}

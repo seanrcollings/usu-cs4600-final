@@ -8,7 +8,7 @@ import { app } from './firebase';
 import { FirebaseError } from 'firebase/app';
 import { redirect } from '@sveltejs/kit';
 
-const auth = getAuth(app);
+export const auth = getAuth(app);
 
 // Populate the auth.currentUser object on page load
 auth.onAuthStateChanged((user) => {});

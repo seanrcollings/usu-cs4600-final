@@ -26,5 +26,5 @@ export interface ListInvitation {
 	listId: string;
 	invitedBy: { email: string; uid: string };
 	singleUse: boolean;
-	contact: string;
+	contact: string | 'MANUAL';
 }
