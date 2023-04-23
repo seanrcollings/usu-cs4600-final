@@ -159,6 +159,14 @@ export const actions = {
 
 		const contactList = contacts.split(',');
 
+		const emailRegex = /^[^@]+@[^@]+\.[^@]+$/;
+
+		for (const contact of contactList) {
+			if (!emailRegex.test(contact)) {
+				return fail(400, { data: { contacts }, message: `Invalid email address: ${contact}` });
+			}
+		}
+
 		try {
 			await Promise.all(
 				contactList.map(async (contact) => {
