@@ -2,22 +2,30 @@ import { fail, redirect } from '@sveltejs/kit';
 import { Queue } from 'bullmq';
 import IORedis from 'ioredis';
 import { REDIS_URL } from '$env/static/private';
-import { getCurrentUser } from '$lib/auth.js';
-import { firestore, getErrorMessage } from '$lib/firestore/firestore.js';
-import { getUserList } from '$lib/firestore/lists.js';
 import type { ListWithItems } from '$lib/types/firestore.js';
-import { Items } from '$lib/firestore/items.js';
+import { getErrorMessage } from '$lib/server/firestore/firestore';
+import { Items } from '$lib/server/firestore/items';
+import { Lists } from '$lib/server/firestore/lists';
+import { requiresUser } from '$lib/server/firebase/auth.js';
 
-export const load = async ({ params }) => {
+const listsClient = new Lists();
+const itemsClient = new Items();
+const connection = new IORedis(REDIS_URL);
+const queue = new Queue('Scrape', { connection });
+
+function scrapeItem(url: string, uid: string, listId: string, itemId: string): void {
+	queue.add('scrape', { url, uid, listId, itemId });
+}
+
+export const load = async ({ params, locals }) => {
 	const { listId } = params;
-	const { uid } = getCurrentUser();
+	const { uid } = requiresUser(locals);
 
-	const listExists = await getUserList(uid, listId);
-	if (!listExists) throw redirect(302, '/dashboard');
+	const list = await listsClient.show(uid, listId);
+	if (!list) throw redirect(302, '/dashboard');
 
 	try {
-		const list = await getUserList(uid, listId);
-		const listItems = await items.list(uid, listId);
+		const listItems = await itemsClient.list(uid, listId);
 		const listWithItems: ListWithItems = { ...list, items: listItems };
 
 		return { list: listWithItems };
@@ -26,16 +34,9 @@ export const load = async ({ params }) => {
 	}
 };
 
-const items = new Items(firestore);
-const connection = new IORedis(REDIS_URL);
-const queue = new Queue('Scrape', { connection });
-
-function scrapeItem(url: string, uid: string, listId: string, itemId: string): void {
-	queue.add('scrape', { url, uid, listId, itemId });
-}
-
 export const actions = {
-	create: async ({ request, params }) => {
+	create: async ({ request, params, locals }) => {
+		const { uid } = requiresUser(locals);
 		const { listId } = params;
 
 		const data = await request.formData();
@@ -61,19 +62,8 @@ export const actions = {
 			}
 		}
 
-		const { uid } = getCurrentUser();
-
-		const listExists = await getUserList(uid, listId);
-
-		if (!listExists) {
-			return fail(400, {
-				data: { title, description, link },
-				message: 'List does not exist'
-			});
-		}
-
 		try {
-			const newItem = await items.create([uid, listId], {
+			const newItem = await itemsClient.create([uid, listId], {
 				title,
 				description,
 				seller: link,
@@ -90,7 +80,8 @@ export const actions = {
 			});
 		}
 	},
-	delete: async ({ request, params }) => {
+	delete: async ({ request, params, locals }) => {
+		const { uid } = requiresUser(locals);
 		const { listId } = params;
 		const data = await request.formData();
 		const itemId = data.get('id') as string | null;
@@ -102,19 +93,8 @@ export const actions = {
 			});
 		}
 
-		const { uid } = getCurrentUser();
-
-		const listExists = await getUserList(uid, listId);
-
-		if (!listExists) {
-			return fail(400, {
-				data: { itemId },
-				message: 'List does not exist'
-			});
-		}
-
 		try {
-			await items.delete(uid, listId, itemId);
+			await itemsClient.delete(uid, listId, itemId);
 			return { itemId };
 		} catch (exc) {
 			return fail(400, {
@@ -123,7 +103,8 @@ export const actions = {
 			});
 		}
 	},
-	update: async ({ request, params }) => {
+	update: async ({ request, params, locals }) => {
+		const { uid } = requiresUser(locals);
 		const { listId } = params;
 
 		const data = await request.formData();
@@ -148,18 +129,8 @@ export const actions = {
 			});
 		}
 
-		const { uid } = getCurrentUser();
-		const listExists = await getUserList(uid, listId);
-
-		if (!listExists) {
-			return fail(400, {
-				data: { title, description, link },
-				message: 'List does not exist'
-			});
-		}
-
 		try {
-			const newItem = await items.update([uid, listId, itemId], {
+			const newItem = await itemsClient.update([uid, listId, itemId], {
 				title,
 				description,
 				seller: link,

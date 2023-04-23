@@ -19,6 +19,7 @@
 		{readonly}
 		{...$$restProps}
 		class={`toggle mr-2 ${$$props.class}`}
+		on:click
 	/>
 	<label class="label" for={id}>
 		{label}

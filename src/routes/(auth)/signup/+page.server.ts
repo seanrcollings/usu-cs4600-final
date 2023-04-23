@@ -1,4 +1,4 @@
-import { createUser, getErrorMessage } from '$lib/auth';
+import { createUser, getErrorMessage, signInUser } from '$lib/server/firebase/auth';
 import { fail, redirect } from '@sveltejs/kit';
 import type { Actions } from './$types';
 
@@ -14,7 +14,8 @@ export const actions = {
 
 		try {
 			const user = await createUser(email, password);
-			cookies.set('token', await user.getIdToken());
+			const { token } = await signInUser(email, password);
+			cookies.set('token', token);
 		} catch (exc) {
 			return fail(400, { data: { email }, message: getErrorMessage(exc as Error) });
 		}
