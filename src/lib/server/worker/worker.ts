@@ -1,11 +1,11 @@
 import { Worker } from 'bullmq';
-import { config } from 'dotenv';
 import IORedis from 'ioredis';
 import { Scraper } from './scraper.js';
-import { itemsClient } from './firestore.js';
 import mail, { Messages } from './sendgrid.js';
+import { Items } from '../firestore/items.js';
 
-config();
+const itemsClient = new Items();
+
 const connection = new IORedis(process.env.REDIS_URL!, { maxRetriesPerRequest: null });
 
 interface ScrapeData {

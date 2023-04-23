@@ -1,22 +1,22 @@
-import { error, fail, redirect } from '@sveltejs/kit';
+import { fail } from '@sveltejs/kit';
+import { compareAsc } from 'date-fns';
+import { Lists } from '$lib/server/firestore/lists';
 import type { Actions } from './$types.js';
-import { firestore, getErrorMessage } from '$lib/firestore/firestore';
-import { Lists } from '$lib/firestore/lists';
-import { Invites } from '$lib/firestore/invites.js';
-import { getCurrentUser } from '$lib/auth';
+import { requiresUser } from '$lib/server/firebase/auth.js';
 
-const listsClient = new Lists(firestore);
-const invitesClient = new Invites(firestore);
+const listsClient = new Lists();
 
-export const load = async () => {
-	const { uid } = getCurrentUser();
+export const load = async ({ locals, url }) => {
+	const { uid } = requiresUser(locals);
 
-	const lists = await listsClient.list(uid);
+	let lists = (await listsClient.list(uid)).sort((a, b) => compareAsc(a.eventDate, b.eventDate));
+
 	return { lists };
 };
 
 export const actions = {
-	create: async ({ request }) => {
+	create: async ({ request, locals }) => {
+		const { email, uid } = requiresUser(locals);
 		const data = await request.formData();
 		const name = data.get('name') as string | null;
 		const eventDate = data.get('eventDate') as string | null;
@@ -25,24 +25,20 @@ export const actions = {
 			return fail(400, { data: { name }, message: 'Name and date are required' });
 		}
 
-		const user = getCurrentUser();
-		const uid = user.uid;
-
 		try {
 			const newList = await listsClient.create([uid], {
 				name,
 				eventDate: new Date(eventDate),
-				createdAt: new Date(),
-				owner: { email: user.email!, uid }
+				owner: { uid, email }
 			});
-
-			return { list: newList };
+			return { newList };
 		} catch (exc) {
-			return fail(400, { data: { name }, message: getErrorMessage(exc as Error) });
+			console.error(exc);
+			return fail(400, { data: { name }, message: 'Something went wrong' });
 		}
 	},
-
-	delete: async ({ request }) => {
+	delete: async ({ request, locals }) => {
+		const { uid } = requiresUser(locals);
 		const data = await request.formData();
 		const id = data.get('id') as string | null;
 
@@ -50,18 +46,11 @@ export const actions = {
 			return fail(400, { data: { id }, message: 'ID is required' });
 		}
 
-		const user = getCurrentUser();
-		if (!user) {
-			return fail(400, { data: { id }, message: 'User is not logged in' });
-		}
-
-		const uid = user.uid;
-
 		try {
 			await listsClient.delete(uid, id);
 			return { id };
 		} catch (exc) {
-			return fail(400, { data: { id }, message: getErrorMessage(exc as Error) });
+			return fail(400, { data: { id }, message: 'Something went wrong' });
 		}
 	}
 } satisfies Actions;

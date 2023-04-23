@@ -9,7 +9,7 @@
 	let hidePastLists = true;
 
 	$: lists = data.lists
-		.filter((list) => (hidePastLists ? !isPast(list.eventDate) || isToday(list.eventDate) : true))
+		// .filter((list) => (hidePastLists ? !isPast(list.eventDate) || isToday(list.eventDate) : true))
 		.sort((a, b) => compareAsc(a.eventDate, b.eventDate));
 </script>
 

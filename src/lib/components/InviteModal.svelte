@@ -24,7 +24,7 @@
 </script>
 
 <div class="flex items-center">
-	<AddButton class="btn-primary" tooltip="Invite People" on:click={() => (open = true)} />
+	<AddButton class="btn-primary" tooltip="Invite People" for="invite-modal" />
 
 	<input type="checkbox" id="invite-modal" class="modal-toggle" bind:checked={open} />
 	<div class="modal">
@@ -36,15 +36,17 @@
 
 			<form use:enhance={handleForm} method="POST" action={`/dashboard/${listId}?/invite`}>
 				<div class="mt-2 mb-2">
-					<TextArea name="contacts" id="contacts" label="Contacts" />
+					<TextArea name="contacts" id="contacts" label="Contacts" required>
+						<label slot="after" for="contacts" class="label">
+							<span class="label-text-alt">Comma-seperated list of emails</span>
+						</label>
+					</TextArea>
 				</div>
 				<p class="text-warning">
 					Warning: once you invite people to the list, you will no longer be able to modify it!
 				</p>
 				<div class="modal-action">
-					<button type="button" class="btn btn-secondary" on:click={() => (open = false)}>
-						Cancel
-					</button>
+					<label for="invite-modal" class="btn btn-secondary">Cancel</label>
 
 					<button type="submit" class="btn btn-primary"> Submit</button>
 				</div>

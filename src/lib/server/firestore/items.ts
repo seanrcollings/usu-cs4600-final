@@ -1,4 +1,4 @@
-import type { Item } from '../types/firestore';
+import type { Item } from '../../types/firestore';
 import { CollectionResource } from './collectionResource.js';
 
 export class Items extends CollectionResource<Item> {

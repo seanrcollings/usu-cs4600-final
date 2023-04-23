@@ -2,24 +2,23 @@ import { fail, redirect } from '@sveltejs/kit';
 import { Queue } from 'bullmq';
 import IORedis from 'ioredis';
 import { REDIS_URL } from '$env/static/private';
-import { getCurrentUser } from '$lib/auth.js';
-import { firestore, getErrorMessage } from '$lib/firestore/firestore.js';
 import type { ListWithItems } from '$lib/types/firestore.js';
-import { Items } from '$lib/firestore/items.js';
-import { Lists } from '$lib/firestore/lists.js';
-import { Invites } from '$lib/firestore/invites.js';
+import { getErrorMessage } from '$lib/server/firestore/firestore';
+import { Items } from '$lib/server/firestore/items';
+import { Lists } from '$lib/server/firestore/lists';
+import { Invites } from '$lib/server/firestore/invites';
+import { requiresUser } from '$lib/server/firebase/auth.js';
 
-const listsClient = new Lists(firestore);
-const itemsClient = new Items(firestore);
-const invitesClient = new Invites(firestore);
-
+const listsClient = new Lists();
+const itemsClient = new Items();
+const invitesClient = new Invites();
 const connection = new IORedis(REDIS_URL);
 const scrapeQueue = new Queue('Scrape', { connection });
 const inviteQueue = new Queue('Invite', { connection });
 
-export const load = async ({ params }) => {
+export const load = async ({ params, locals }) => {
 	const { listId } = params;
-	const { uid } = getCurrentUser();
+	const { uid } = requiresUser(locals);
 
 	const list = await listsClient.show(uid, listId);
 	if (!list) throw redirect(302, '/dashboard');
@@ -35,7 +34,8 @@ export const load = async ({ params }) => {
 };
 
 export const actions = {
-	create: async ({ request, params }) => {
+	create: async ({ request, params, locals }) => {
+		const { uid } = requiresUser(locals);
 		const { listId } = params;
 
 		const data = await request.formData();
@@ -61,17 +61,6 @@ export const actions = {
 			}
 		}
 
-		const { uid } = getCurrentUser();
-
-		const list = await listsClient.show(uid, listId);
-
-		if (!list) {
-			return fail(400, {
-				data: { title, description, link },
-				message: 'List does not exist'
-			});
-		}
-
 		try {
 			const newItem = await itemsClient.create([uid, listId], {
 				title,
@@ -92,7 +81,8 @@ export const actions = {
 			});
 		}
 	},
-	delete: async ({ request, params }) => {
+	delete: async ({ request, params, locals }) => {
+		const { uid } = requiresUser(locals);
 		const { listId } = params;
 		const data = await request.formData();
 		const itemId = data.get('id') as string | null;
@@ -101,17 +91,6 @@ export const actions = {
 			return fail(400, {
 				data: { itemId },
 				message: 'Item ID is required'
-			});
-		}
-
-		const { uid } = getCurrentUser();
-
-		const list = await listsClient.show(uid, listId);
-
-		if (!list) {
-			return fail(400, {
-				data: { itemId },
-				message: 'List does not exist'
 			});
 		}
 
@@ -125,7 +104,8 @@ export const actions = {
 			});
 		}
 	},
-	update: async ({ request, params }) => {
+	update: async ({ request, params, locals }) => {
+		const { uid } = requiresUser(locals);
 		const { listId } = params;
 
 		const data = await request.formData();
@@ -150,16 +130,6 @@ export const actions = {
 			});
 		}
 
-		const { uid } = getCurrentUser();
-		const listExists = await listsClient.show(uid, listId);
-
-		if (!listExists) {
-			return fail(400, {
-				data: { title, description, link },
-				message: 'List does not exist'
-			});
-		}
-
 		try {
 			const newItem = await itemsClient.update([uid, listId, itemId], {
 				title,
@@ -177,7 +147,8 @@ export const actions = {
 		}
 	},
 
-	invite: async ({ params, request }) => {
+	invite: async ({ params, request, locals }) => {
+		const currUser = requiresUser(locals);
 		const data = await request.formData();
 		const { listId } = params;
 		const contacts = data.get('contacts') as string | null;
@@ -185,8 +156,6 @@ export const actions = {
 		if (!contacts) {
 			return fail(400, { data: { contacts }, message: 'Must provide at least one contact' });
 		}
-
-		const currUser = getCurrentUser();
 
 		if (!listsClient.show(currUser.uid, listId)) {
 			return fail(404, { data: { listId }, message: 'List not found' });

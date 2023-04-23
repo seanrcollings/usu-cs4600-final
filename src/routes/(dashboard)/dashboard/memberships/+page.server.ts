@@ -1,12 +1,11 @@
-import { getCurrentUser } from '$lib/auth';
-import { getUserMembershipLists } from '$lib/firestore/lists';
-import { redirect } from '@sveltejs/kit';
+import { requiresUser } from '$lib/server/firebase/auth.js';
+import { Lists } from '$lib/server/firestore/lists';
 
-export async function load() {
-	const user = getCurrentUser();
-	if (!user) throw redirect(302, '/login');
+const listsClient = new Lists();
 
-	const lists = await getUserMembershipLists(user?.uid);
+export async function load({ locals }) {
+	const { uid } = requiresUser(locals);
+	const lists = await listsClient.membershipLists(uid);
 
 	return { lists };
 }

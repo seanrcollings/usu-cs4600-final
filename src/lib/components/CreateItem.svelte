@@ -24,9 +24,9 @@
 </script>
 
 <div class="flex items-center">
-	<AddButton class="btn-primary" tooltip="Add an item" on:click={() => (open = true)} />
+	<AddButton class="btn-primary" tooltip="Add an item" for="create-item-modal" />
 
-	<input type="checkbox" id="create-list-modal" class="modal-toggle" bind:checked={open} />
+	<input type="checkbox" id="create-item-modal" class="modal-toggle" bind:checked={open} />
 	<div class="modal">
 		<div class="modal-box relative">
 			<h3 class="text-lg font-bold">Add a New Item</h3>
@@ -47,10 +47,7 @@
 					</TextInput>
 				</div>
 				<div class="modal-action">
-					<button type="button" class="btn btn-secondary" on:click={() => (open = false)}>
-						Cancel
-					</button>
-
+					<label class="btn btn-secondary" for="create-item-modal">Cancel</label>
 					<button type="submit" class="btn btn-primary"> Submit</button>
 				</div>
 			</form>

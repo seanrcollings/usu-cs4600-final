@@ -1,19 +1,11 @@
-import {
-	addDoc,
-	collection,
-	getDoc,
-	type Firestore,
-	getDocs,
-	doc,
-	updateDoc,
-	deleteDoc,
-	Timestamp
-} from 'firebase/firestore';
+import type { Firestore } from 'firebase-admin/firestore';
+import { Timestamp } from 'firebase-admin/firestore';
+import { firestore } from './firestore.js';
 
 export class CollectionResource<Resource> {
 	db: Firestore;
 
-	constructor(db: Firestore) {
+	constructor(db: Firestore = firestore) {
 		this.db = db;
 	}
 
@@ -27,18 +19,18 @@ export class CollectionResource<Resource> {
 
 	async create<Create extends {}>(pathSegments: string[], data: Create): Promise<Resource> {
 		const path = this.paths.create(pathSegments);
-		const resourceCollection = collection(this.db, path);
-		const docRef = await addDoc(resourceCollection, data);
-		const doc = await getDoc(docRef);
-		const docData = this.sanitize(doc.data() as Resource);
+		const doc = this.db.collection(path).doc();
+		await doc.create({ ...data, createdAt: new Date() });
 
+		const res = await doc.get();
+		const docData = this.sanitize(res.data() as Resource);
 		return { id: doc.id, ...docData } as unknown as Resource;
 	}
 
 	async list(...pathSegments: string[]): Promise<Resource[]> {
 		const path = this.paths.list(pathSegments);
-		const resourceCollection = collection(this.db, path);
-		const snapshot = await getDocs(resourceCollection);
+		const collection = this.db.collection(path);
+		const snapshot = await collection.get();
 		const resources = snapshot.docs.map((doc) => {
 			const docData = this.sanitize(doc.data() as Resource);
 			return { id: doc.id, ...docData };
@@ -48,9 +40,10 @@ export class CollectionResource<Resource> {
 
 	async show(...pathSegments: string[]): Promise<Resource | null> {
 		const path = this.paths.show(pathSegments);
-		const docRef = doc(this.db, path);
-		const snapshot = await getDoc(docRef);
-		if (!snapshot.exists()) return null;
+		const doct = this.db.doc(path);
+		const snapshot = await doct.get();
+
+		if (!snapshot.exists) return null;
 
 		const docData = this.sanitize(snapshot.data() as Resource);
 
@@ -59,22 +52,21 @@ export class CollectionResource<Resource> {
 
 	async exists(...pathSegments: string[]): Promise<boolean> {
 		const path = this.paths.show(pathSegments);
-		const docRef = doc(this.db, path);
-		const snapshot = await getDoc(docRef);
-		return snapshot.exists();
+		const doc = this.db.doc(path);
+		const snapshot = await doc.get();
+		return snapshot.exists;
 	}
 
 	async update(pathSegments: string[], data: Partial<Resource>): Promise<void> {
 		const path = this.paths.update(pathSegments);
-		const docRef = doc(this.db, path);
-		// @ts-ignore
-		await updateDoc(docRef, { ...data });
+		const doc = this.db.doc(path);
+		await doc.update(data);
 	}
 
 	async delete(...pathSegments: string[]): Promise<void> {
 		const path = this.paths.delete(pathSegments);
-		const docRef = doc(this.db, path);
-		await deleteDoc(docRef);
+		const doc = this.db.doc(path);
+		await doc.delete();
 	}
 
 	protected sanitize(data: Resource): Resource {

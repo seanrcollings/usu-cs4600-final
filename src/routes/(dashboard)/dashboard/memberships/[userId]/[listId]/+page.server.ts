@@ -1,19 +1,17 @@
-import { getCurrentUser } from '$lib/auth.js';
-import { firestore } from '$lib/firestore/firestore.js';
-import { Items } from '$lib/firestore/items.js';
-import { Lists } from '$lib/firestore/lists.js';
+import { requiresUser } from '$lib/server/firebase/auth.js';
+import { Items } from '$lib/server/firestore/items.js';
+import { Lists } from '$lib/server/firestore/lists.js';
 import { error } from '@sveltejs/kit';
 
-const listsClient = new Lists(firestore);
-const itemsClient = new Items(firestore);
+const listsClient = new Lists();
+const itemsClient = new Items();
 
-export async function load({ params }) {
+export async function load({ params, locals }) {
+	const user = requiresUser(locals);
 	const { userId, listId } = params;
 	const list = await listsClient.show(userId, listId);
 
-	const currUser = getCurrentUser();
-
-	if (!list || !list.members.includes(currUser.uid)) {
+	if (!list || !list.members.includes(user.uid)) {
 		throw error(404, 'Not Found');
 	}
 

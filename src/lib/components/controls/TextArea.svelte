@@ -14,6 +14,7 @@
 	<label class="label" for={id}>
 		{label}
 	</label>
+	<slot name="before" />
 	<textarea
 		class="textarea textarea-bordered h-36"
 		bind:value
@@ -25,4 +26,5 @@
 		{readonly}
 		{...$$restProps}
 	/>
+	<slot name="after" />
 </div>
