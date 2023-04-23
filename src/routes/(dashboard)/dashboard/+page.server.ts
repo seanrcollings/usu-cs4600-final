@@ -16,7 +16,7 @@ export const load = async ({ locals, url }) => {
 
 export const actions = {
 	create: async ({ request, locals }) => {
-		const { uid } = requiresUser(locals);
+		const { email, uid } = requiresUser(locals);
 		const data = await request.formData();
 		const name = data.get('name') as string | null;
 		const eventDate = data.get('eventDate') as string | null;
@@ -26,7 +26,11 @@ export const actions = {
 		}
 
 		try {
-			const newList = await listsClient.create([uid], { name, eventDate: new Date(eventDate) });
+			const newList = await listsClient.create([uid], {
+				name,
+				eventDate: new Date(eventDate),
+				owner: { uid, email }
+			});
 			return { newList };
 		} catch (exc) {
 			console.error(exc);

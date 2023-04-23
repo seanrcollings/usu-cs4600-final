@@ -3,6 +3,8 @@ export interface List {
 	name: string;
 	createdAt: Date;
 	eventDate: Date;
+	members: string[];
+	owner: { email: string; uid: string };
 }
 
 export interface Item {
@@ -17,4 +19,12 @@ export interface Item {
 
 export interface ListWithItems extends List {
 	items: Item[];
+}
+
+export interface ListInvitation {
+	id: string;
+	listId: string;
+	invitedBy: { email: string; uid: string };
+	singleUse: boolean;
+	contact: string | 'MANUAL';
 }

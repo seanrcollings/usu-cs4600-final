@@ -1,6 +1,7 @@
 import { Worker } from 'bullmq';
 import IORedis from 'ioredis';
 import { Scraper } from './scraper.js';
+import mail, { Messages } from './sendgrid.js';
 import { Items } from '../firestore/items.js';
 
 const itemsClient = new Items();
@@ -37,4 +38,25 @@ new Worker<ScrapeData>(
 		itemsClient.update([uid, listId, itemId], updated);
 	},
 	{ connection, concurrency: 1 }
+);
+
+interface InviteData {
+	contact: string;
+	inviteId: string;
+	listId: string;
+	invitedBy: string;
+}
+
+new Worker<InviteData>(
+	'Invite',
+	async (job) => {
+		const { contact, inviteId, listId, invitedBy } = job.data;
+		try {
+			await mail.send(Messages.invite(contact, invitedBy, inviteId));
+			console.log(`Sent invite to ${contact} for list ${listId}`);
+		} catch (exc) {
+			console.error(exc);
+		}
+	},
+	{ connection, concurrency: 10 }
 );

@@ -6,16 +6,15 @@ import type { ListWithItems } from '$lib/types/firestore.js';
 import { getErrorMessage } from '$lib/server/firestore/firestore';
 import { Items } from '$lib/server/firestore/items';
 import { Lists } from '$lib/server/firestore/lists';
+import { Invites } from '$lib/server/firestore/invites';
 import { requiresUser } from '$lib/server/firebase/auth.js';
 
 const listsClient = new Lists();
 const itemsClient = new Items();
+const invitesClient = new Invites();
 const connection = new IORedis(REDIS_URL);
-const queue = new Queue('Scrape', { connection });
-
-function scrapeItem(url: string, uid: string, listId: string, itemId: string): void {
-	queue.add('scrape', { url, uid, listId, itemId });
-}
+const scrapeQueue = new Queue('Scrape', { connection });
+const inviteQueue = new Queue('Invite', { connection });
 
 export const load = async ({ params, locals }) => {
 	const { listId } = params;
@@ -70,7 +69,9 @@ export const actions = {
 				createdAt: new Date()
 			});
 
-			if (link) scrapeItem(link, uid, listId, newItem.id);
+			if (link) {
+				await scrapeQueue.add('scrape', { url: link, uid, listId, itemId: newItem.id });
+			}
 
 			return { newItem };
 		} catch (exc) {
@@ -143,6 +144,46 @@ export const actions = {
 				data: { title, description, link },
 				message: getErrorMessage(exc as Error)
 			});
+		}
+	},
+
+	invite: async ({ params, request, locals }) => {
+		const currUser = requiresUser(locals);
+		const data = await request.formData();
+		const { listId } = params;
+		const contacts = data.get('contacts') as string | null;
+
+		if (!contacts) {
+			return fail(400, { data: { contacts }, message: 'Must provide at least one contact' });
+		}
+
+		if (!listsClient.show(currUser.uid, listId)) {
+			return fail(404, { data: { listId }, message: 'List not found' });
+		}
+
+		const contactList = contacts.split(',');
+
+		try {
+			await Promise.all(
+				contactList.map(async (contact) => {
+					const invite = await invitesClient.create({
+						listId: listId,
+						singleUse: true,
+						contact: contact,
+						invitedBy: { email: currUser.email, uid: currUser.uid }
+					});
+					inviteQueue.add('invite', {
+						contact,
+						inviteId: invite.id,
+						listId,
+						invitedBy: currUser.email
+					});
+					return invite;
+				})
+			);
+			return { success: true };
+		} catch (exc) {
+			return fail(400, { data: { contacts }, message: getErrorMessage(exc as Error) });
 		}
 	}
 };

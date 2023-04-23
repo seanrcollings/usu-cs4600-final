@@ -50,6 +50,13 @@ export class CollectionResource<Resource> {
 		return { id: snapshot.id, ...docData } as unknown as Resource;
 	}
 
+	async exists(...pathSegments: string[]): Promise<boolean> {
+		const path = this.paths.show(pathSegments);
+		const doc = this.db.doc(path);
+		const snapshot = await doc.get();
+		return snapshot.exists;
+	}
+
 	async update(pathSegments: string[], data: Partial<Resource>): Promise<void> {
 		const path = this.paths.update(pathSegments);
 		const doc = this.db.doc(path);
