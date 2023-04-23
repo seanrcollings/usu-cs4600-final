@@ -36,14 +36,21 @@
 	</div>
 
 	<div class="flex flex-wrap flex-col sm:flex-row items-center">
-		{#each lists as list, i (list.id)}
-			<div class="m-4" animate:flip={{ duration: 200 }}>
-				<ListCard {list} />
+		{#if lists.length === 0}
+			<div class="flex flex-col items-center justify-center w-full h-96 gap-10">
+				<h2 class="text-3xl font-bold">Create Your First List</h2>
+				<CreateList />
 			</div>
-		{/each}
+		{:else}
+			{#each lists as list, i (list.id)}
+				<div class="m-4" animate:flip={{ duration: 200 }}>
+					<ListCard {list} />
+				</div>
+			{/each}
 
-		<div class="flex items-center">
-			<CreateList />
-		</div>
+			<div class="flex items-center">
+				<CreateList />
+			</div>
+		{/if}
 	</div>
 </div>

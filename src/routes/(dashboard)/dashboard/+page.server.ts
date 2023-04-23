@@ -1,5 +1,5 @@
 import { fail } from '@sveltejs/kit';
-import { compareAsc, isPast, isToday } from 'date-fns';
+import { compareAsc } from 'date-fns';
 import { Lists } from '$lib/server/firestore/lists';
 import type { Actions } from './$types.js';
 import { requiresUser } from '$lib/server/firebase/auth.js';

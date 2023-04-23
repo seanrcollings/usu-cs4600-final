@@ -30,7 +30,7 @@
 </script>
 
 <div>
-	<AddButton class="btn-primary" tooltip="Add a List" on:click={() => (open = true)} />
+	<AddButton class="btn-primary" tooltip="Add a List" for="create-list-modal" />
 
 	<input type="checkbox" id="create-list-modal" class="modal-toggle" bind:checked={open} />
 	<div class="modal">
@@ -46,10 +46,7 @@
 					<DateInput name="eventDate" id="eventDate" label="Event Date" value={today} required />
 				</div>
 				<div class="modal-action">
-					<button type="button" class="btn btn-secondary" on:click={() => (open = false)}>
-						Cancel
-					</button>
-
+					<label class="btn btn-secondary" for="create-list-modal">Cancel</label>
 					<button type="submit" class="btn btn-primary"> Submit</button>
 				</div>
 			</form>

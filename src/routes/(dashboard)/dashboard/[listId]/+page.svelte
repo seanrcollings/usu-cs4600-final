@@ -24,12 +24,18 @@
 	</div>
 
 	<div class="flex flex-wrap sm:mt-4 flex-col sm:flex-row items-center">
-		{#each list.items.sort((a, b) => compareAsc(a.createdAt, b.createdAt)) as item (item.id)}
-			<div class="m-4" animate:flip={{ duration: 200 }}>
-				<ItemCard {item} listId={list.id} />
+		{#if list.items.length === 0}
+			<div class="flex flex-col items-center justify-center w-full h-96 gap-10">
+				<h2 class="text-3xl font-bold">Create Your First Item</h2>
+				<CreateItem listId={list.id} />
 			</div>
-		{/each}
-
-		<CreateItem listId={list.id} />
+		{:else}
+			{#each list.items.sort((a, b) => compareAsc(a.createdAt, b.createdAt)) as item (item.id)}
+				<div class="m-4" animate:flip={{ duration: 200 }}>
+					<ItemCard {item} listId={list.id} />
+				</div>
+			{/each}
+			<CreateItem listId={list.id} />
+		{/if}
 	</div>
 </div>
