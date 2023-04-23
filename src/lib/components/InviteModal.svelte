@@ -1,9 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import { enhance, type SubmitFunction } from '$app/forms';
-	import TextInput from './controls/TextInput.svelte';
 	import type { ActionData } from '../../routes/(dashboard)/dashboard/[listId]/$types';
-	import AddButton from './controls/AddButton.svelte';
 	import TextArea from './controls/TextArea.svelte';
 
 	export let listId: string;
@@ -23,8 +21,20 @@
 	};
 </script>
 
-<div class="flex items-center">
-	<AddButton class="btn-primary" tooltip="Invite People" for="invite-modal" />
+<div class="flex items-center w-full sm:w-auto sm:ml-auto">
+	<label for="invite-modal" class="btn btn-primary gap-2 w-full">
+		<svg
+			xmlns="http://www.w3.org/2000/svg"
+			fill="none"
+			viewBox="0 0 24 24"
+			stroke-width="1.5"
+			stroke="currentColor"
+			class="w-6 h-6"
+		>
+			<path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+		</svg>
+		Invite People
+	</label>
 
 	<input type="checkbox" id="invite-modal" class="modal-toggle" bind:checked={open} />
 	<div class="modal">

@@ -23,14 +23,10 @@ export const load = async ({ params, locals }) => {
 	const list = await listsClient.show(uid, listId);
 	if (!list) throw redirect(302, '/dashboard');
 
-	try {
-		const listItems = await itemsClient.list(uid, listId);
-		const listWithItems: ListWithItems = { ...list, items: listItems };
+	const listItems = await itemsClient.list(uid, listId);
+	const listWithItems: ListWithItems = { ...list, items: listItems };
 
-		return { list: listWithItems };
-	} catch (exc) {
-		return { error: getErrorMessage(exc as Error) };
-	}
+	return { list: listWithItems };
 };
 
 export const actions = {
