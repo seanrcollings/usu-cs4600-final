@@ -4,6 +4,7 @@
 	import DeleteButton from './controls/DeleteButton.svelte';
 	import EditItem from './EditItem.svelte';
 	import { enhance } from '$app/forms';
+	import ItemDetails from './ItemDetails.svelte';
 
 	export let item: Item;
 	export let listId: string;
@@ -21,45 +22,47 @@
 
 <svelte:window bind:innerWidth />
 
-<div
-	class="card w-72 h-96 bg-base-content shadow-xl text-base-300"
-	on:mouseenter={() => (hovering = mobile ? hovering : true)}
-	on:mouseleave={() => (hovering = mobile ? hovering : false)}
-	in:scale={{ duration: 200 }}
->
-	{#if item.image}
-		<figure><img src={item.image} alt={item.title} /></figure>
-	{/if}
+<ItemDetails {item} />
 
-	{#if hovering}
-		<div class="card-actions absolute right-2 top-2" transition:fly>
-			<EditItem {listId} {item} />
+<label for="item-details-{item.id}" class="hover:cursor-pointer">
+	<div
+		class="card w-72 h-96 bg-base-300 shadow-xl text-base-content hover:bg-base-300 transition-colors"
+		in:scale={{ duration: 200 }}
+		on:mouseenter={() => (hovering = mobile ? hovering : true)}
+		on:mouseleave={() => (hovering = mobile ? hovering : false)}
+	>
+		{#if item.image}
+			<figure><img src={item.image} alt={item.title} /></figure>
+		{/if}
 
-			<form method="POST" action={`/dashboard/${listId}?/delete`} use:enhance>
-				<button type="submit" class="btn btn-circle btn-sm btn-secondary">
-					<input type="text" value={item.id} name="id" hidden />
-					<DeleteButton class="btn-sm btn-secondary" tooltip="Delete Item" />
-				</button>
-			</form>
-		</div>
-	{/if}
+		{#if hovering}
+			<div class="card-actions absolute right-2 top-2" transition:fly>
+				<EditItem {listId} {item} />
 
-	<div class="card-body">
-		<div class="flex justify-between">
-			<h2 class="card-title">{item.title}</h2>
-			{#if item.price}
-				<div class="badge badge-secondary">{item.price}</div>
-			{/if}
-		</div>
-
-		<!-- <p class="text-start">{item.description}</p> -->
-
-		{#if item.seller}
-			<div class="card-actions justify-end mt-4">
-				<a class="btn btn-primary" href={item.seller} target="_blank"
-					>{domain?.toUpperCase()} Link</a
-				>
+				<form method="POST" action={`/dashboard/${listId}?/delete`} use:enhance>
+					<button type="submit" class="btn btn-circle btn-sm btn-secondary">
+						<input type="text" value={item.id} name="id" hidden />
+						<DeleteButton class="btn-sm btn-secondary" tooltip="Delete Item" />
+					</button>
+				</form>
 			</div>
 		{/if}
+
+		<div class="card-body pb-1">
+			<div class="flex justify-between items-center">
+				<h2 class="card-title">{item.title}</h2>
+				{#if item.price}
+					<div class="badge badge-secondary">{item.price}</div>
+				{/if}
+			</div>
+
+			{#if item.seller}
+				<div class="card-actions justify-end mt-auto mb-4">
+					<a class="btn btn-primary" href={item.seller} target="_blank"
+						>{domain?.toUpperCase()} Link</a
+					>
+				</div>
+			{/if}
+		</div>
 	</div>
-</div>
+</label>
