@@ -4,14 +4,17 @@
 	import DeleteButton from './controls/DeleteButton.svelte';
 	import EditItem from './EditItem.svelte';
 	import { enhance } from '$app/forms';
-	import ItemDetails from './ItemDetails.svelte';
+	import ItemView from './members/ItemView.svelte';
 
 	export let item: Item;
 	export let listId: string;
+	export let mode: 'edit' | 'view' = 'view';
 
 	$: domain = item.seller
 		? new URL(item.seller).hostname.replace('www.', '').split('.')[0]
 		: undefined;
+
+	let open = false;
 
 	let hovering = false;
 	let innerWidth: number = Infinity;
@@ -22,23 +25,29 @@
 
 <svelte:window bind:innerWidth />
 
-<ItemDetails {item} />
+{#if mode === 'view'}
+	<ItemView {listId} {item} bind:open />
+{:else}
+	<EditItem {listId} {item} bind:open />
+{/if}
 
 <div
 	class="card w-72 h-96 bg-base-300 shadow-xl text-base-content hover:bg-base-200 transition-colors"
 	in:scale={{ duration: 200 }}
-	on:mouseenter={() => (hovering = mobile ? hovering : true)}
-	on:mouseleave={() => (hovering = mobile ? hovering : false)}
+	on:mouseenter={() => (hovering = true)}
+	on:mouseleave={() => (hovering = false)}
 >
 	{#if item.image}
-		<figure><img src={item.image} alt={item.title} /></figure>
+		<figure>
+			<label for="item-details-{item.id}" class="hover:cursor-pointer">
+				<img src={item.image} alt={item.title} />
+			</label>
+		</figure>
 	{/if}
 
 	{#if hovering}
 		<div class="card-actions absolute right-2 top-2" transition:fly>
-			<EditItem {listId} {item} />
-
-			<form method="POST" action={`/dashboard/${listId}?/delete`} use:enhance>
+			<form method="POST" action="/dashboard/{listId}?/delete" use:enhance>
 				<button type="submit" class="btn btn-circle btn-sm btn-secondary">
 					<input type="text" value={item.id} name="id" hidden />
 					<DeleteButton class="btn-sm btn-secondary" tooltip="Delete Item" />

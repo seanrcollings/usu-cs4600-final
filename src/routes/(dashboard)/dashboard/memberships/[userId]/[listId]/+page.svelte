@@ -9,7 +9,7 @@
 </script>
 
 <div class="container m-auto flex flex-col">
-	<div class="mx-4">
+	<div class="mx-4 pb-4 border-b border-b-accent">
 		<h1 class="text-3xl sm:text-5xl font-bold self-start text-center sm:text-left">{list.name}</h1>
 
 		<div class="flex flex-wrap items-center mt-4 gap-4 justify-center sm:justify-start">
@@ -30,7 +30,7 @@
 	<div class="flex flex-wrap sm:mt-4 flex-col sm:flex-row items-center">
 		{#each list.items.sort((a, b) => compareAsc(a.createdAt, b.createdAt)) as item (item.id)}
 			<div class="m-4" animate:flip={{ duration: 200 }}>
-				<ItemCard {item} listId={list.id} />
+				<ItemCard {item} listId={list.id} mode="view" />
 			</div>
 		{/each}
 	</div>

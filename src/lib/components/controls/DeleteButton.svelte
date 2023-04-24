@@ -1,21 +1,28 @@
 <script lang="ts">
 	export let tooltip = '';
+	let clicked = false;
 </script>
 
 <div class="tooltip" data-tip={tooltip}>
-	<button class={`btn btn-circle ${$$props.class}`} on:click>
-		<svg
-			xmlns="http://www.w3.org/2000/svg"
-			class="h-6 w-6"
-			fill="none"
-			viewBox="0 0 24 24"
-			stroke="currentColor"
-			><path
-				stroke-linecap="round"
-				stroke-linejoin="round"
-				stroke-width="2"
-				d="M6 18L18 6M6 6l12 12"
-			/></svg
-		>
+	<button
+		class={`btn btn-circle ${$$props.class}`}
+		class:loading={clicked}
+		on:click={() => (clicked = true)}
+	>
+		{#if !clicked}
+			<svg
+				xmlns="http://www.w3.org/2000/svg"
+				class="h-6 w-6"
+				fill="none"
+				viewBox="0 0 24 24"
+				stroke="currentColor"
+				><path
+					stroke-linecap="round"
+					stroke-linejoin="round"
+					stroke-width="2"
+					d="M6 18L18 6M6 6l12 12"
+				/></svg
+			>
+		{/if}
 	</button>
 </div>

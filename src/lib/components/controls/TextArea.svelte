@@ -6,6 +6,7 @@
 	export let required: boolean = false;
 	export let disabled: boolean = false;
 	export let readonly: boolean = false;
+	export let resize = true;
 
 	export let label: string = '';
 </script>
@@ -17,6 +18,7 @@
 	<slot name="before" />
 	<textarea
 		class="textarea textarea-bordered h-36"
+		class:resize-none={!resize}
 		bind:value
 		{id}
 		{name}
