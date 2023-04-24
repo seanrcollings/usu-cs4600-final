@@ -2,7 +2,9 @@
 	import '../../app.css';
 	import { theme, extraNavOptions } from '$lib/stores';
 	import Nav from '$lib/components/Menu.svelte';
+	import type { PageData } from './$types';
 
+	export let data: PageData;
 	let navBarOpen = false;
 </script>
 
@@ -15,7 +17,7 @@
 			<option value="dracula">Dracula Theme</option>
 			<option value="business">Business Theme</option>
 		</select>
-		<Nav bind:open={navBarOpen}>
+		<Nav bind:open={navBarOpen} name={data.user.name || data.user.email}>
 			<div slot="mobile-menu">
 				{#each $extraNavOptions as row}
 					<button

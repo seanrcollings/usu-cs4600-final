@@ -1,3 +1,4 @@
+import { requiresUser } from '$lib/server/firebase/auth.js';
 import { redirect } from '@sveltejs/kit';
 
 export const load = ({ cookies, locals }) => {
@@ -5,5 +6,9 @@ export const load = ({ cookies, locals }) => {
 		throw redirect(300, '/login');
 	}
 
-	return { loggedIn: true };
+	const user = requiresUser(locals);
+
+	return {
+		user: { uid: user.uid, email: user.email, name: user.displayName }
+	};
 };
