@@ -18,10 +18,24 @@
 					</figure>
 				</div>
 			</div>
-			<div class="w-1/2">
-				<h2 class="text-4xl font-bold mb-1">{item.title}</h2>
+			<div class="flex flex-col items-start w-1/2">
+				<div class="flex justify-between items-center w-full mb-2">
+					<h2 class="text-4xl font-bold">{item.title}</h2>
+					<div
+						class="tooltip tooltip-left"
+						data-tip="Price Guessed from provided link. May not be accurate"
+					>
+						<p class="badge badge-secondary p-3 text-lg font-semibold">{item.price}</p>
+					</div>
+				</div>
 				<a href={item.seller} class="btn btn-sm btn-primary">Link</a>
-				<TextArea value={item.description} id="description" disabled resize={false} />
+				<TextArea
+					value={item.description}
+					id="description"
+					class="flex-grow self-stretch"
+					disabled
+					resize={false}
+				/>
 			</div>
 		</div>
 		<div class="mt-10 flex justify-center gap-5">

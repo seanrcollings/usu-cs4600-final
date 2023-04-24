@@ -37,7 +37,7 @@
 			<form use:enhance={handleForm} method="POST" action={`/dashboard/${listId}?/create`}>
 				<div class="mt-2 mb-2">
 					<TextInput name="title" id="name" label="Name" required />
-					<TextArea name="description" id="description" label="Description" />
+					<TextArea name="description" id="description" label="Description" class="min-h-[9rem]" />
 					<TextInput name="link" id="link" label="Link">
 						<label class="label" slot="after" for="link">
 							<span class="label-text-alt">

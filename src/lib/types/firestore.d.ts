@@ -28,3 +28,21 @@ export interface ListInvitation {
 	singleUse: boolean;
 	contact: string | 'MANUAL';
 }
+
+export interface SingleClaim {
+	type: 'SINGLE';
+	claimedBy: { email: string; uid: string };
+}
+
+export interface SplitClaim {
+	type: 'SPLIT';
+	claimedBy: { email: string; uid: string }[];
+}
+
+export interface PoolClaim {
+	type: 'POOL';
+	price: number;
+	pool: { uid: string; email: string; amount: number }[];
+}
+
+export type Claim = SingleClaim | SplitClaim | PoolClaim;

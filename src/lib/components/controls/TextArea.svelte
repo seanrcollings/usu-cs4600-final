@@ -11,13 +11,13 @@
 	export let label: string = '';
 </script>
 
-<div class="form-control">
+<div class="form-control {$$props.class}">
 	<label class="label" for={id}>
 		{label}
 	</label>
 	<slot name="before" />
 	<textarea
-		class="textarea textarea-bordered h-36"
+		class="textarea textarea-bordered flex-1"
 		class:resize-none={!resize}
 		bind:value
 		{id}
@@ -26,7 +26,6 @@
 		{required}
 		{disabled}
 		{readonly}
-		{...$$restProps}
 	/>
 	<slot name="after" />
 </div>

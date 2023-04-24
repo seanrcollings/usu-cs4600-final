@@ -46,6 +46,7 @@
 					id="description"
 					label="Description"
 					required
+					class="min-h-[9rem]"
 					bind:value={item.description}
 				/>
 				<TextInput name="link" id="link" label="Link" required bind:value={item.seller} />
