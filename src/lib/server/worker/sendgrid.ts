@@ -12,7 +12,7 @@ export const Messages = {
 		subject: 'You have been invited to a list!',
 		html: `
       You have been invited to a list by ${invitedBy}!
-      <a href="http://localhost:5174/invite/${inviteId}">Click here to accept the invitation</a>
+      <a href="${process.env.APP_URL!}/invite/${inviteId}">Click here to accept the invitation</a>
       `
 	})
 };

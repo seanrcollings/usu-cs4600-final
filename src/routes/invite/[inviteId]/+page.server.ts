@@ -1,16 +1,14 @@
-import { auth } from '$lib/auth.js';
-import { firestore } from '$lib/firestore/firestore.js';
-import { Invites } from '$lib/firestore/invites.js';
-import { Lists } from '$lib/firestore/lists.js';
+import { Invites } from '$lib/server/firestore/invites.js';
+import { Lists } from '$lib/server/firestore/lists.js';
 import { error, redirect } from '@sveltejs/kit';
 
-const invitesClient = new Invites(firestore);
-const listsClient = new Lists(firestore);
+const invitesClient = new Invites();
+const listsClient = new Lists();
 
-export async function load({ params }) {
+export async function load({ params, locals }) {
 	const { inviteId } = params;
 
-	const currUser = auth.currentUser;
+	const currUser = locals.user;
 	if (!currUser) throw redirect(302, `/login?redirectTo=/invite/${inviteId}`);
 
 	const invite = await invitesClient.show(inviteId);
@@ -22,7 +20,7 @@ export async function load({ params }) {
 	let updatedMembers = list.members;
 	if (updatedMembers) {
 		if (updatedMembers.includes(currUser.uid)) {
-			throw redirect(302, '/dashboard');
+			throw redirect(302, `/dashboard/memberships/${list.owner.uid}/${list.id}`);
 		}
 		updatedMembers = [...updatedMembers, currUser.uid];
 	} else {
@@ -33,7 +31,9 @@ export async function load({ params }) {
 		members: updatedMembers
 	});
 
-	// if (invite.singleUse) await invitesClient.delete(inviteId);
+	if (invite.singleUse) {
+		invitesClient.delete(inviteId);
+	}
 
-	throw redirect(302, '/dashboard');
+	throw redirect(302, `/dashboard/memberships/${list.owner.uid}/${list.id}`);
 }
