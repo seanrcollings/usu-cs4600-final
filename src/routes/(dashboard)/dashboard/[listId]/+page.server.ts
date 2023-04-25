@@ -8,6 +8,7 @@ import { Items } from '$lib/server/firestore/items';
 import { Lists } from '$lib/server/firestore/lists';
 import { Invites } from '$lib/server/firestore/invites';
 import { requiresUser } from '$lib/server/firebase/auth.js';
+import type { PageServerLoad } from './$types.js';
 
 const listsClient = new Lists();
 const itemsClient = new Items();
@@ -16,7 +17,7 @@ const connection = new IORedis(REDIS_URL);
 const scrapeQueue = new Queue('Scrape', { connection });
 const inviteQueue = new Queue('Invite', { connection });
 
-export const load = async ({ params, locals }) => {
+export const load: PageServerLoad = async ({ params, locals }) => {
 	const { listId } = params;
 	const { uid } = requiresUser(locals);
 

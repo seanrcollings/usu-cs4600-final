@@ -24,8 +24,6 @@
 			{/if}
 		</div>
 		<p class="text-start"><strong>Created:</strong> {format(list.createdAt, 'P')}</p>
-		<p class="text-start"><strong>Members:</strong> 0</p>
-		<p class="text-start"><strong>Items:</strong> 0</p>
 		<div class="card-actions justify-end">
 			<td class="flex justify-end">
 				<EditButton href={`dashboard/${list.id}`} class="mr-2 btn-primary" tooltip="Edit List" />
