@@ -16,6 +16,8 @@
 	"devDependencies": {
 		"@sveltejs/adapter-auto": "^2.0.0",
 		"@sveltejs/kit": "^1.5.0",
+		"@types/mapbox-gl": "^2.7.10",
+		"@types/mapbox__mapbox-sdk": "^0.13.4",
 		"@types/node": "^18.15.11",
 		"autoprefixer": "^10.4.14",
 		"nodemon": "^2.0.22",
@@ -31,6 +33,7 @@
 		"vite": "^4.2.0"
 	},
 	"dependencies": {
+		"@mapbox/mapbox-sdk": "^0.15.0",
 		"@sendgrid/mail": "^7.7.0",
 		"bullmq": "^3.10.4",
 		"daisyui": "^2.51.5",
@@ -38,6 +41,7 @@
 		"dotenv": "^16.0.3",
 		"firebase-admin": "^11.7.0",
 		"ioredis": "^5.3.1",
+		"mapbox-gl": "^2.14.1",
 		"node-html-parser": "^6.1.5"
 	}
 }
