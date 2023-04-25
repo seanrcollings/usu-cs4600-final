@@ -14,10 +14,10 @@
 </svelte:head>
 
 <div class="hero min-h-screen bg-base-200">
-	<div class="hero-content flex-col lg:flex-row-reverse md:w-1/3 w-3/4">
+	<div class="container hero-content flex-col lg:flex-row-reverse">
 		<div class="text-center lg:text-left">
 			<h1 class="text-5xl font-bold">Sign Up</h1>
-			<p class="py-6">
+			<p class="py-6 max-w-sm">
 				<strong> Gift Giving Made Easy. </strong>
 				Create your account to start making lists and sharing them with your friends and family.
 			</p>

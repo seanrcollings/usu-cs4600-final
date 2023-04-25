@@ -1,10 +1,15 @@
+export interface SimpleUserDetails {
+	uid: string;
+	email: string;
+}
+
 export interface List {
 	id: string;
 	name: string;
 	createdAt: Date;
 	eventDate: Date;
 	members: string[];
-	owner: { email: string; uid: string };
+	owner: SimpleUserDetails;
 }
 
 export interface Item {
@@ -15,6 +20,7 @@ export interface Item {
 	price?: string;
 	seller?: string;
 	createdAt: Date;
+	claim?: Claim;
 }
 
 export interface ListWithItems extends List {
@@ -24,19 +30,19 @@ export interface ListWithItems extends List {
 export interface ListInvitation {
 	id: string;
 	listId: string;
-	invitedBy: { email: string; uid: string };
+	invitedBy: SimpleUserDetails;
 	singleUse: boolean;
 	contact: string | 'MANUAL';
 }
 
 export interface SingleClaim {
 	type: 'SINGLE';
-	claimedBy: { email: string; uid: string };
+	claimedBy: SimpleUserDetails;
 }
 
 export interface SplitClaim {
 	type: 'SPLIT';
-	claimedBy: { email: string; uid: string }[];
+	splitBy: SimpleUserDetails[];
 }
 
 export interface PoolClaim {

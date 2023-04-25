@@ -11,7 +11,7 @@
 </script>
 
 <div class="hero min-h-screen bg-base-200">
-	<div class="hero-content flex-col lg:flex-row-reverse w-1/3">
+	<div class="container hero-content flex-col lg:flex-row-reverse">
 		<div class="text-center lg:text-left">
 			<h1 class="text-5xl font-bold">Login now!</h1>
 			<p class="py-6">

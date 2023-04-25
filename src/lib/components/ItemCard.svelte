@@ -26,7 +26,7 @@
 <svelte:window bind:innerWidth />
 
 {#if mode === 'view'}
-	<ItemView {listId} {item} bind:open />
+	<ItemView {item} bind:open />
 {:else}
 	<EditItem {listId} {item} bind:open />
 {/if}
@@ -34,8 +34,12 @@
 <div
 	class="card w-72 h-96 bg-base-300 shadow-xl text-base-content hover:bg-base-200 transition-colors"
 	in:scale={{ duration: 200 }}
-	on:mouseenter={() => (hovering = true)}
-	on:mouseleave={() => (hovering = false)}
+	on:mouseenter={() => {
+		if (mode === 'edit') hovering = true;
+	}}
+	on:mouseleave={() => {
+		if (mode === 'edit') hovering = false;
+	}}
 >
 	{#if item.image}
 		<figure>

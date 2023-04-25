@@ -46,7 +46,7 @@
 
 			<form use:enhance={handleForm} method="POST" action={`/dashboard/${listId}?/invite`}>
 				<div class="mt-2 mb-2">
-					<TextArea name="contacts" id="contacts" label="Contacts" required>
+					<TextArea name="contacts" id="contacts" label="Contacts" required class="h-48">
 						<label slot="after" for="contacts" class="label">
 							<span class="label-text-alt">Comma-seperated list of emails</span>
 						</label>
