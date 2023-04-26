@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { slide } from 'svelte/transition';
 	import { navigating } from '$app/stores';
-	import LogoutHandler from './LogoutHandler.svelte';
 	import HamburgerIcon from './icons/HamburgerIcon.svelte';
 	import CloseIcon from './icons/CloseIcon.svelte';
 
@@ -13,7 +12,6 @@
 
 <div class="hidden sm:flex">
 	<a href="/dashboard" class="btn btn-ghost">Dashboard</a>
-	<!-- <LogoutHandler /> -->
 	<div class="dropdown dropdown-end">
 		<button class="btn btn-ghost">{name || 'Profile'}</button>
 		<ul class="dropdown-content menu p-2 shadow bg-base-200 rounded-box w-52">
