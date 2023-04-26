@@ -45,9 +45,9 @@
 		</div>
 	</div>
 
-	<div class="flex flex-wrap sm:mt-4 flex-col sm:flex-row items-center">
+	<div class="flex flex-wrap sm:mt-4 flex-col sm:flex-row items-center gap-6">
 		{#each list.items.sort((a, b) => compareAsc(a.createdAt, b.createdAt)) as item (item.id)}
-			<div class="m-4" animate:flip={{ duration: 200 }}>
+			<div animate:flip={{ duration: 200 }}>
 				<ItemCard {item} listId={list.id} mode="view" />
 			</div>
 		{/each}

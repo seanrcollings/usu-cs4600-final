@@ -11,7 +11,7 @@
 </script>
 
 <div class="container m-auto flex flex-col">
-	<div class="mx-4 pb-4 border-b-accent border-b">
+	<div class="mx-4 pb-4 mb-4 border-b-accent border-b">
 		<h1 class="text-3xl sm:text-5xl font-bold self-start text-center sm:text-left">{list.name}</h1>
 
 		<div class="flex flex-wrap items-center mt-4 gap-4 justify-center sm:justify-start">
@@ -25,7 +25,7 @@
 		</div>
 	</div>
 
-	<div class="flex flex-wrap sm:mt-4 flex-col sm:flex-row items-center">
+	<div class="flex flex-wrap sm:mt-4 flex-col sm:flex-row items-center gap-5">
 		{#if list.items.length === 0}
 			<div class="flex flex-col items-center justify-center w-full h-96 gap-10">
 				<h2 class="text-3xl font-bold">Create Your First Item</h2>
@@ -33,7 +33,7 @@
 			</div>
 		{:else}
 			{#each list.items.sort((a, b) => compareAsc(a.createdAt, b.createdAt)) as item (item.id)}
-				<div class="m-4" animate:flip={{ duration: 200 }}>
+				<div animate:flip={{ duration: 200 }}>
 					<ItemCard {item} listId={list.id} mode="edit" />
 				</div>
 			{/each}

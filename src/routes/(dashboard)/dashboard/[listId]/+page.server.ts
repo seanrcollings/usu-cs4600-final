@@ -111,28 +111,29 @@ export const actions = {
 		const link = data.get('link') as string | null;
 		const itemId = data.get('id') as string | null;
 
-		if (!itemId || !title || !description || !link) {
+		if (!itemId || !title) {
 			return fail(400, {
 				data: { title, description, link },
-				message: 'All three fields are required'
+				message: 'Title is Required'
 			});
 		}
 
-		try {
-			new URL(link);
-		} catch (exc) {
-			return fail(400, {
-				data: { title, description, link },
-				message: 'Enter a valid URL'
-			});
+		if (link) {
+			try {
+				new URL(link);
+			} catch (exc) {
+				return fail(400, {
+					data: { title, description, link },
+					message: 'Enter a valid URL'
+				});
+			}
 		}
 
 		try {
 			const newItem = await itemsClient.update([uid, listId, itemId], {
 				title,
-				description,
-				seller: link,
-				image: 'https://placehold.co/300x150'
+				description: description || '',
+				seller: link || ''
 			});
 
 			return { newItem };

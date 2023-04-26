@@ -52,12 +52,11 @@
 						</label>
 					</TextArea>
 				</div>
-				<p class="text-warning">
+				<!-- <p class="text-warning">
 					Warning: once you invite people to the list, you will no longer be able to modify it!
-				</p>
+				</p> -->
 				<div class="modal-action">
 					<label for="invite-modal" class="btn btn-secondary">Cancel</label>
-
 					<button type="submit" class="btn btn-primary"> Submit</button>
 				</div>
 			</form>
