@@ -1,4 +1,5 @@
 import { parse, HTMLElement } from 'node-html-parser';
+import axios from 'axios';
 
 interface OpenGraphData {
 	title: string;
@@ -37,8 +38,10 @@ export class Scraper {
 
 	async root() {
 		if (!this._root) {
-			const res = await fetch(this.url.toString(), { headers: { 'User-Agent': 'Mozilla/5.0' } });
-			this._root = parse(await res.text());
+			const res = await axios.get(this.url.toString(), {
+				headers: { 'User-Agent': 'Mozilla/5.0' }
+			});
+			this._root = parse(await res.data);
 		}
 		return this._root;
 	}

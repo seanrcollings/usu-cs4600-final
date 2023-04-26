@@ -10,7 +10,6 @@
 	export let item: Item;
 
 	$: url = item.seller ? new URL(item.seller) : undefined;
-	$: showMap = geolookupDomains[url?.hostname!] !== undefined && $currentPosition !== null;
 
 	// Services
 
@@ -51,23 +50,23 @@
 		}
 	};
 
-	$: if (showMap && $currentPosition) constructMap();
+	$: if ($currentPosition) constructMap();
 </script>
 
-{#if showMap}
-	<div class="w-1/2 border-2 border-accent rounded-lg h-64">
-		{#if $currentPosition === undefined}
-			<p class="text-center">
+<div class="border-2 border-accent rounded-lg h-64">
+	{#if $currentPosition === undefined}
+		<div class="h-full flex items-center justify-center">
+			<p>
 				<button class="btn btn-ghost loading"> Loading map</button>
 			</p>
-		{:else if $currentPosition === null}
-			<p class="text-center p-3 text-sm font-semibold">
-				<span class="m-2">LOCATION NOT AVAILABLE</span>
-			</p>
-		{/if}
-		<div id="map-{item.id}" class="map h-full w-full" />
-	</div>
-{/if}
+		</div>
+	{:else if $currentPosition === null}
+		<p class="text-center p-3 text-sm font-semibold">
+			<span class="m-2">LOCATION NOT AVAILABLE</span>
+		</p>
+	{/if}
+	<div id="map-{item.id}" class="map h-full w-full" />
+</div>
 
 <style>
 	.map .mapboxgl-canvas-container canvas {
