@@ -3,7 +3,7 @@ import { fail, redirect } from '@sveltejs/kit';
 import type { Actions } from './$types';
 
 export const actions = {
-	default: async ({ request, cookies }) => {
+	default: async ({ request, cookies, url }) => {
 		const data = await request.formData();
 		const email = data.get('email') as string | null;
 		const password = data.get('password') as string | null;
@@ -13,9 +13,14 @@ export const actions = {
 		}
 
 		try {
-			const user = await createUser(email, password);
+			await createUser(email, password);
 			const { token } = await signInUser(email, password);
 			cookies.set('token', token);
+
+			const redirectTo = url.searchParams.get('redirectTo');
+			if (redirectTo) {
+				return redirect(302, redirectTo);
+			}
 		} catch (exc) {
 			return fail(400, { data: { email }, message: getErrorMessage(exc as Error) });
 		}
