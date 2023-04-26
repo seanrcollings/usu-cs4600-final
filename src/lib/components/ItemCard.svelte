@@ -17,34 +17,16 @@
 
 	let hovering = false;
 	let innerWidth: number = Infinity;
+
 	// 640px equivalent to tailwind's `sm:` breakpoint
 	$: mobile = innerWidth < 640;
 	$: hovering = mobile;
-
-	let currentPosition: GeolocationPosition | undefined | null;
-
-	onMount(() => {
-		if (mode === 'edit') return;
-		window.navigator.geolocation.getCurrentPosition(
-			(position) => {
-				currentPosition = position;
-			},
-			(err) => {
-				console.error(err);
-				currentPosition = null;
-			},
-			{
-				maximumAge: 300000,
-				enableHighAccuracy: false
-			}
-		);
-	});
 </script>
 
 <svelte:window bind:innerWidth />
 
 {#if mode === 'view'}
-	<ItemView {item} bind:open {currentPosition} />
+	<ItemView {item} bind:open />
 {:else}
 	<EditItem {listId} {item} bind:open />
 {/if}

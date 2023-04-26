@@ -2,4 +2,7 @@
 
 export default ['www.amazon.com', 'www.ebay.com', 'www.bestbuy.com'];
 
-export const geolookupDomains: Record<string, string> = { 'www.bestbuy.com': 'best buy' };
+export const geolookupDomains: Record<string, string> = {
+	'www.bestbuy.com': 'best buy',
+	'www.walmart.com': 'walmart'
+};

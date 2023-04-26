@@ -3,9 +3,27 @@
 	import ItemCard from '$lib/components/ItemCard.svelte';
 	import type { PageData } from './$types';
 	import { flip } from 'svelte/animate';
+	import { onMount } from 'svelte';
+	import { currentPosition } from '$lib/stores';
 
 	export let data: PageData;
 	$: list = data.list;
+
+	onMount(() => {
+		window.navigator.geolocation.getCurrentPosition(
+			(position) => {
+				$currentPosition = position;
+			},
+			(err) => {
+				console.error(err);
+				$currentPosition = null;
+			},
+			{
+				maximumAge: 300000,
+				enableHighAccuracy: false
+			}
+		);
+	});
 </script>
 
 <div class="container m-auto flex flex-col">
