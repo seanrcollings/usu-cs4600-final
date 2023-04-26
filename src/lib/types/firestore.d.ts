@@ -48,6 +48,7 @@ export interface SplitClaim {
 export interface PoolClaim {
 	type: 'POOL';
 	price: number;
+	isPercent: boolean;
 	pool: { uid: string; email: string; amount: number }[];
 }
 

@@ -25,6 +25,7 @@
 	<form action="?/claim" method="POST" use:enhance>
 		<input type="text" name="type" value="POOL" hidden />
 		<input type="text" name="itemId" value={item.id} hidden />
+		<input type="text" name="itemPrice" value={item.price} hidden />
 		<button class="btn btn-lg btn-ghost border border-accent flex-col gap-2 h-24 w-28">
 			<span class="text-2xl">⚖️</span>
 			Pool

@@ -8,6 +8,9 @@
 	export let readonly: boolean = false;
 	export let autocomplete: boolean = true;
 
+	export let max = Infinity;
+	export let step = 1;
+
 	export let label: string = '';
 </script>
 
@@ -20,6 +23,8 @@
 		class="input input-bordered"
 		type="number"
 		bind:value
+		{max}
+		{step}
 		{id}
 		{name}
 		{placeholder}
