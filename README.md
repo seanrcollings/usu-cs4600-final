@@ -23,11 +23,13 @@ Install dependencies
 $ yarn install
 ```
 
-And repeat
+```
+$  cp .env.example .env
+```
 
-```
-until finished
-```
+Fill in the `.env` file with the appropriate values from Firebase and SendGrid.
+
+Also, get a Google Service Account credentials for your Firebase project and save them as `./gcpgreds.json`
 
 ### Running
 
