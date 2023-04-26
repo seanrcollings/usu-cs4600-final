@@ -53,10 +53,16 @@ export const actions = {
 				}
 			});
 		} else if (type === 'POOL') {
+			const givenPrice = data.get('itemPrice') as string;
+			const amount = parseFloat(givenPrice.replace(/[^0-9.]/g, ''));
+			const price = isNaN(amount) ? 100 : amount;
+			const isPercent = isNaN(amount);
+
 			await itemsClient.update([userId, listId, itemId], {
 				claim: {
 					type,
-					price: 50,
+					price,
+					isPercent,
 					pool: []
 				}
 			});

@@ -1,0 +1,4 @@
+#map .mapboxgl-canvas-container canvas {
+	border-radius: 0.5rem;
+	width: 464px !important;
+}

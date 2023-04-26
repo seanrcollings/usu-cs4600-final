@@ -26,6 +26,8 @@ export class Scraper {
 				return this.scrapeAmazon();
 			case 'www.ebay.com':
 				return this.scrapeEbay();
+			case 'www.bestbuy.com':
+				return this.scrapeBestBuy();
 			default:
 				return this.unknownSiteScrape();
 		}
@@ -87,5 +89,12 @@ export class Scraper {
 		const seller = await this.getText('.ux-seller-section__item--seller a');
 
 		return { ...partial, price, seller, siteName: 'Ebay' };
+	}
+
+	private async scrapeBestBuy(): Promise<ScrapeSchema> {
+		const partial = await this.scrapeOpenGraph();
+		const price = await this.getText('.priceView-customer-price span');
+
+		return { ...partial, price, seller: 'Best Buy', siteName: 'Best Buy' };
 	}
 }

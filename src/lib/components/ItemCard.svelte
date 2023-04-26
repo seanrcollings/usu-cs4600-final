@@ -5,14 +5,13 @@
 	import EditItem from './EditItem.svelte';
 	import { enhance } from '$app/forms';
 	import ItemView from './members/ItemView.svelte';
+	import { onMount } from 'svelte';
 
 	export let item: Item;
 	export let listId: string;
 	export let mode: 'edit' | 'view' = 'view';
 
-	$: domain = item.seller
-		? new URL(item.seller).hostname.replace('www.', '').split('.')[0]
-		: undefined;
+	$: domain = item.seller ? new URL(item.seller).hostname.split('.')[1] : undefined;
 
 	let open = false;
 
@@ -21,12 +20,31 @@
 	// 640px equivalent to tailwind's `sm:` breakpoint
 	$: mobile = innerWidth < 640;
 	$: hovering = mobile;
+
+	let currentPosition: GeolocationPosition | undefined | null;
+
+	onMount(() => {
+		if (mode === 'edit') return;
+		window.navigator.geolocation.getCurrentPosition(
+			(position) => {
+				currentPosition = position;
+			},
+			(err) => {
+				console.error(err);
+				currentPosition = null;
+			},
+			{
+				maximumAge: 300000,
+				enableHighAccuracy: false
+			}
+		);
+	});
 </script>
 
 <svelte:window bind:innerWidth />
 
 {#if mode === 'view'}
-	<ItemView {item} bind:open />
+	<ItemView {item} bind:open {currentPosition} />
 {:else}
 	<EditItem {listId} {item} bind:open />
 {/if}
