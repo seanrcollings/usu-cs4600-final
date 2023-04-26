@@ -26,6 +26,7 @@
 				{/if}
 
 				<form action="/login" method="POST" class="flex flex-col gap-4">
+					<input type="text" value={$page.url.searchParams.get('redirectTo')} hidden />
 					<TextInput
 						name="email"
 						id="email"

@@ -7,6 +7,7 @@ export const actions = {
 		const data = await request.formData();
 		const email = data.get('email') as string | null;
 		const password = data.get('password') as string | null;
+		const redirectTo = data.get('redirectTo') as string | null;
 
 		if (!email || !password) {
 			return fail(400, { data: { email }, message: 'Email and password is required' });
@@ -17,9 +18,8 @@ export const actions = {
 			const { token } = await signInUser(email, password);
 			cookies.set('token', token);
 
-			const redirectTo = url.searchParams.get('redirectTo');
 			if (redirectTo) {
-				return redirect(302, redirectTo);
+				throw redirect(302, redirectTo);
 			}
 		} catch (exc) {
 			return fail(400, { data: { email }, message: getErrorMessage(exc as Error) });
